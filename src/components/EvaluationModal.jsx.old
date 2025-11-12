@@ -1,0 +1,611 @@
+import React, { useState, useEffect } from 'react';
+import { XMarkIcon, ArrowPathIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import DocxViewer from './DocxViewer';
+import { API_BASE_URL } from '../services/api';
+
+const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isEvaluating, setIsEvaluating] = useState(false);
+    const [countdown, setCountdown] = useState(10);
+    const [processedData, setProcessedData] = useState({
+        studentSubmission: {
+            mcqs: [],
+            shortQuestions: [],
+            metadata: {}
+        },
+        answerSheet: {
+            mcqs: [],
+            shortQuestions: [],
+            metadata: {}
+        },
+        evaluationResults: null // Will store AI evaluation results from Google Colab
+    });
+
+    useEffect(() => {
+        if (isOpen && examId) {
+            fetchAnswerSheet();
+        }
+    }, [isOpen, examId]);
+
+    const [answerSheet, setAnswerSheet] = useState(null);
+    const [answerSheetData, setAnswerSheetData] = useState(null);
+
+    const extractQuestionsFromText = (text) => {
+        // Implementation
+        return { mcqs: [], shortQuestions: [] };
+    };
+
+    const processPDFDocument = async (url) => {
+        // Implementation
+        return { mcqs: [], shortQuestions: [] };
+    };
+
+    const processDocxDocument = async (url) => {
+        // Implementation
+        return { mcqs: [], shortQuestions: [] };
+    };
+
+    const processDocument = async (file) => {
+        const API_BASE = import.meta.env.VITE_API_URL?.split('/api')[0] || 'http://localhost:5000';
+        
+        // Use the most appropriate URL available
+        let fileUrl = file.fileUrl;
+        
+        // If fileUrl isn't available, construct it from downloadUrl
+        if (!fileUrl && file.downloadUrl) {
+            // Implementation
+        }
+        
+        if (!fileUrl) {
+            // Implementation
+        }
+        
+        console.log('Processing document:', file.filename, 'URL:', fileUrl);
+        
+        try {
+            if (/\.pdf$/i.test(file.filename)) {
+                return await processPDFDocument(fileUrl);
+            } else if (/\.docx$/i.test(file.filename)) {
+                return await processDocxDocument(fileUrl);
+            } else {
+                return { error: `Unsupported file type: ${file.filename}` };
+            }
+        } catch (error) {
+            console.error('Error processing document:', error);
+            return { error: error.message || 'Failed to process document' };
+        }
+    };
+
+    const fetchAnswerSheet = async () => {
+        try {
+            const downloadUrl = answerSheetData.downloadUrl.startsWith('http') 
+                ? answerSheetData.downloadUrl 
+                : `${API_BASE_URL.split('/api')[0]}${answerSheetData.downloadUrl}`;
+                
+            setAnswerSheet({
+                _id: answerSheetData._id,
+                filename: answerSheetData.filename,
+                downloadUrl: downloadUrl,
+                fileUrl: downloadUrl
+            });
+        } catch (err) {
+            setError(err.message || 'Failed to load answer sheet');
+            console.error('Error:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-5 mx-auto p-5 border w-4/5 max-w-5xl shadow-lg rounded-md bg-white">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900">Evaluate Submission</h3>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-500 hover:text-gray-700"
+                    >
+                        <XMarkIcon className="h-6 w-6" />
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    {/* Student Submission */}
+                    <div className="border rounded-lg p-4">
+                        <h4 className="font-semibold mb-4">Student's Submission</h4>
+                        <div className="h-[600px] overflow-y-auto">
+                            {studentSubmission ? (
+                                <>
+                                    {/\.pdf$/i.test(studentSubmission.filename) ? (
+                                        <div className="relative h-full">
+                                            <iframe
+                                                src={studentSubmission.fileUrl}
+                                                title="Student Submission"
+                                                className="w-full h-full border rounded"
+                                                onError={(e) => {
+                                                    console.error("Failed to load PDF", e);
+                                                    e.target.style.display = 'none';
+                                                    e.target.nextSibling.style.display = 'flex';
+                                                }}
+                                            />
+                                            <div className="hidden flex-col items-center justify-center absolute inset-0 bg-gray-100">
+                                                <p className="text-red-600 mb-4">Failed to convert document. Please try downloading instead.</p>
+                                                <a
+                                                    href={studentSubmission.fileUrl || studentSubmission.downloadUrl}
+                                                    download={studentSubmission.filename}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                                >
+                                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                    Download Original Document
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ) : /\.docx$/i.test(studentSubmission.filename) ? (
+                                        <div className="relative h-full">
+                                            <DocxViewer
+                                                fileUrl={studentSubmission.fileUrl}
+                                                filename={studentSubmission.filename}
+                                            />
+                                            <div className="flex flex-col items-center justify-center mt-4">
+                                                <a
+                                                    href={studentSubmission.fileUrl || studentSubmission.downloadUrl}
+                                                    download={studentSubmission.filename}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                                >
+                                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                    Download Original Document
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ) : /\.(jpg|jpeg|png|gif)$/i.test(studentSubmission.filename) ? (
+                                        <div className="relative h-full">
+                                            <img
+                                                src={studentSubmission.fileUrl}
+                                                alt="Student Submission"
+                                                className="max-w-full"
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    e.target.nextSibling.style.display = 'flex';
+                                                }}
+                                            />
+                                            <div className="hidden flex-col items-center justify-center mt-4">
+                                                <p className="text-red-600 mb-4">Failed to load image. Please try downloading instead.</p>
+                                                <a
+                                                    href={studentSubmission.fileUrl || studentSubmission.downloadUrl}
+                                                    download={studentSubmission.filename}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                                >
+                                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                    Download Original Document
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-4">
+                                            <p className="text-gray-600">Preview not available</p>
+                                            <a
+                                                href={studentSubmission.fileUrl || studentSubmission.downloadUrl}
+                                                download={studentSubmission.filename}
+                                                className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                            >
+                                                <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                Download Original Document
+                                            </a>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="flex items-center justify-center h-full">
+                                    <p className="text-gray-600">No submission available</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Answer Sheet */}
+                    <div className="border rounded-lg p-4">
+                        <h4 className="font-semibold mb-4">Official Answer Sheet</h4>
+                        {loading ? (
+                            <div className="flex items-center justify-center h-[600px]">
+                                <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+                            </div>
+                        ) : error ? (
+                            <div className="flex flex-col items-center justify-center h-[600px] text-center">
+                                <div className="text-red-600 mb-4">
+                                    {error}
+                                </div>
+                                <button
+                                    onClick={fetchAnswerSheet}
+                                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Retry Loading
+                                </button>
+                            </div>
+                        ) : answerSheet ? (
+                            <div className="h-[600px] overflow-y-auto">
+                                {/\.pdf$/i.test(answerSheet.filename) ? (
+                                    <div className="relative h-full">
+                                        <iframe
+                                            src={answerSheet.fileUrl || answerSheet.downloadUrl}
+                                            title="Answer Sheet"
+                                            className="w-full h-full border rounded"
+                                            onError={(e) => {
+                                                console.error("Failed to load PDF", e);
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <div className="hidden flex-col items-center justify-center absolute inset-0 bg-gray-100">
+                                            <p className="text-red-600 mb-4">Failed to load answer sheet. Please try downloading instead.</p>
+                                            <a
+                                                href={answerSheet.fileUrl || answerSheet.downloadUrl}
+                                                download={answerSheet.filename}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                            >
+                                                <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                Download Answer Sheet
+                                            </a>
+                                        </div>
+                                    </div>
+                                ) : /\.docx$/i.test(answerSheet.filename) ? (
+                                    <div className="relative h-full">
+                                        <DocxViewer
+                                            fileUrl={answerSheet.fileUrl || answerSheet.downloadUrl}
+                                            filename={answerSheet.filename}
+                                        />
+                                        <div className="flex flex-col items-center justify-center mt-4">
+                                            <a
+                                                href={answerSheet.fileUrl || answerSheet.downloadUrl}
+                                                download={answerSheet.filename}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                            >
+                                                <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                Download Answer Sheet
+                                            </a>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-4">
+                                        <p className="text-gray-600">Preview not available</p>
+                                        <a
+                                            href={answerSheet.fileUrl || answerSheet.downloadUrl}
+                                            download={answerSheet.filename}
+                                            className="mt-2 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        >
+                                            <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                            Download Answer Sheet
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="text-center py-4">
+                                <p className="text-gray-600">No answer sheet available</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Evaluation Results */}
+                {processedData.evaluationResults && (
+                    <div className="mt-6 border rounded-lg p-4 bg-blue-50">
+                        <h4 className="font-semibold mb-2 text-lg">AI Evaluation Results:</h4>
+                        <div className="overflow-auto max-h-80">
+                            <pre className="whitespace-pre-wrap text-sm bg-white p-4 rounded border">
+                                {JSON.stringify(processedData.evaluationResults, null, 2)}
+                            </pre>
+                        </div>
+                    </div>
+                )}
+                
+                {/* Manual Download Option - More prominent now */}
+                {(processedData.studentSubmission.mcqs.length > 0 || processedData.studentSubmission.shortQuestions.length > 0) && (
+                    <div className="mt-6 border-2 border-yellow-400 rounded-lg p-4 bg-yellow-50">
+                        <div className="flex items-center mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                            <h4 className="font-semibold text-lg">RECOMMENDED: Manual Evaluation Option</h4>
+                        </div>
+                        
+                        <div className="bg-white p-4 rounded-lg border mb-3">
+                            <p className="mb-2">
+                                <strong>Due to CORS restrictions with the Google Colab server</strong>, direct automatic evaluation may not work.
+                                Use this more reliable option instead:
+                            </p>
+                            <ol className="list-decimal pl-5 space-y-2 text-sm">
+                                <li>Download the processed data using the button below</li>
+                                <li>Go to the Google Colab notebook at <a href="https://99c5a7908be8.ngrok-free.app" target="_blank" className="text-blue-600 underline">https://99c5a7908be8.ngrok-free.app</a></li>
+                                <li>Upload the JSON file to the "Upload JSON" section in Google Colab</li>
+                                <li>Follow the instructions in the notebook to process the data</li>
+                            </ol>
+                        </div>
+                        
+                        <button
+                            onClick={() => {
+                                // Prepare clean data object with only what's needed
+                                const cleanData = {
+                                    studentSubmission: {
+                                        mcqs: processedData.studentSubmission.mcqs,
+                                        shortQuestions: processedData.studentSubmission.shortQuestions,
+                                        metadata: processedData.studentSubmission.metadata
+                                    },
+                                    answerSheet: {
+                                        mcqs: processedData.answerSheet.mcqs,
+                                        shortQuestions: processedData.answerSheet.shortQuestions,
+                                        metadata: processedData.answerSheet.metadata
+                                    }
+                                };
+                                
+                                const jsonData = JSON.stringify(cleanData, null, 2); // Pretty print with 2 space indentation
+                                const blob = new Blob([jsonData], { type: 'application/json' });
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = 'evaluation-data.json';
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                
+                                // Show a toast or feedback that download was successful
+                                alert('Data downloaded successfully. Please upload this file to Google Colab.');
+                            }}
+                            className="w-full px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium flex items-center justify-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                            Download Evaluation Data for Google Colab
+                        </button>
+                    </div>
+                )}
+
+                {/* Debug Section for Processed Data */}
+                {(processedData.studentSubmission.mcqs.length > 0 || processedData.studentSubmission.shortQuestions.length > 0) && (
+                    <div className="mt-6 border rounded-lg p-4 bg-gray-50">
+                        <h4 className="font-semibold mb-2">Processed Data:</h4>
+                        <div className="text-xs overflow-auto max-h-60">
+                            <pre className="whitespace-pre-wrap">
+                                {JSON.stringify({
+                                    studentSubmission: {
+                                        mcqs: processedData.studentSubmission.mcqs,
+                                        shortQuestions: processedData.studentSubmission.shortQuestions,
+                                        metadata: processedData.studentSubmission.metadata
+                                    },
+                                    answerSheet: {
+                                        mcqs: processedData.answerSheet.mcqs,
+                                        shortQuestions: processedData.answerSheet.shortQuestions,
+                                        metadata: processedData.answerSheet.metadata
+                                    }
+                                }, null, 2)}
+                            </pre>
+                        </div>
+                    </div>
+                )}
+
+                <div className="mt-6 flex flex-col">
+                    <div className="bg-blue-50 p-3 rounded-lg mb-4">
+                        <p className="text-sm text-blue-800">
+                            <strong>Note:</strong> This system will extract questions and answers from both documents, then provide options for evaluation.
+                        </p>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-4">
+                        <button
+                            onClick={onClose}
+                            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={async () => {
+                                try {
+                                    setIsEvaluating(true);
+                                    setError(null);
+                                    
+                                    // Make sure both documents are available
+                                    if (!studentSubmission) {
+                                        throw new Error('Student submission is not available');
+                                    }
+                                    
+                                    if (!answerSheet) {
+                                        throw new Error('Answer sheet is not available');
+                                    }
+                                    
+                                    console.log('Starting document processing...');
+                                    
+                                    // Process both documents in parallel
+                                    const results = await Promise.allSettled([
+                                        processDocument(studentSubmission),
+                                        processDocument(answerSheet)
+                                    ]);
+                                    
+                                    // Check for errors in processing
+                                    if (results[0].status === 'rejected') {
+                                        throw new Error(`Failed to process student submission: ${results[0].reason}`);
+                                    }
+                                    
+                                    if (results[1].status === 'rejected') {
+                                        throw new Error(`Failed to process answer sheet: ${results[1].reason}`);
+                                    }
+                                    
+                                    const studentQuestions = results[0].value;
+                                    const answerSheetQuestions = results[1].value;
+                                    
+                                    // Check for processing errors
+                                    if (studentQuestions.error) {
+                                        throw new Error(`Error processing student submission: ${studentQuestions.error}`);
+                                    }
+                                    
+                                    if (answerSheetQuestions.error) {
+                                        throw new Error(`Error processing answer sheet: ${answerSheetQuestions.error}`);
+                                    }
+
+                                    // Store the processed data
+                                    const newProcessedData = {
+                                        studentSubmission: {
+                                            mcqs: studentQuestions.mcqs || [],
+                                            shortQuestions: studentQuestions.shortQuestions || [],
+                                            metadata: {
+                                                filename: studentSubmission.filename,
+                                                submissionId: studentSubmission._id,
+                                                submissionDate: studentSubmission.submissionDate
+                                            }
+                                        },
+                                        answerSheet: {
+                                            mcqs: answerSheetQuestions.mcqs || [],
+                                            shortQuestions: answerSheetQuestions.shortQuestions || [],
+                                            metadata: {
+                                                filename: answerSheet.filename,
+                                                examId: examId
+                                            }
+                                        }
+                                    };
+
+                                    setProcessedData(newProcessedData);
+                                    console.log('Processed Data:', newProcessedData);
+
+                                    // Send the processed data to the backend for evaluation
+                                    try {
+                                        // For now, let's use a different CORS proxy - the previous one requires temporary access
+                                        const COLAB_URL = 'https://99c5a7908be8.ngrok-free.app/evaluate';
+                                        
+                                        // Try multiple CORS proxies - some may be more reliable than others
+                                        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+                                        
+                                        const API_URL = CORS_PROXY + encodeURIComponent(COLAB_URL);
+                                        
+                                        console.log('Sending data to:', COLAB_URL, 'via proxy');
+                                        console.log('Data being sent:', newProcessedData);
+                                        
+                                        // Send the data through a CORS proxy
+                                        const response = await fetch(API_URL, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                // Skip Authorization as it might cause preflight issues
+                                            },
+                                            // Use no-cors mode as a last resort if needed
+                                            // mode: 'no-cors', 
+                                            body: JSON.stringify(newProcessedData)
+                                        });
+                                        
+                                        console.log('Response status:', response.status);
+                                        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
+                                        
+                                        // Handle the response from Google Colab via proxy
+                                        let responseData;
+                                        try {
+                                            const responseText = await response.text();
+                                            console.log('Raw response:', responseText);
+                                            
+                                            // Try to parse as JSON if possible
+                                            try {
+                                                responseData = JSON.parse(responseText);
+                                                console.log('Parsed response data:', responseData);
+                                            } catch (parseError) {
+                                                console.log('Response is not JSON, using as plain text');
+                                                responseData = { 
+                                                    message: responseText,
+                                                    isPlainText: true
+                                                };
+                                            }
+                                        } catch (e) {
+                                            console.warn('Could not read response:', e);
+                                        }
+                                        
+                                        // Even if status is not 200, we'll try to use the response data
+                                        // For debugging, we don't want to throw errors right away
+                                        if (!response.ok) {
+                                            console.warn(`Server returned status code ${response.status}`);
+                                            if (responseData) {
+                                                console.warn('Response data from error:', responseData);
+                                            }
+                                            
+                                            // Only throw if we have nothing usable
+                                            if (!responseData || responseData.isPlainText && responseData.message.length < 5) {
+                                                throw new Error(`Server error: ${response.status}`);
+                                            }
+                                        }
+                                        
+                                        console.log('Evaluation data sent successfully to Google Colab');
+                                        
+                                        // Store any evaluation results from Colab
+                                        if (responseData) {
+                                            setProcessedData(prevData => ({
+                                                ...prevData,
+                                                evaluationResults: responseData
+                                            }));
+                                        }
+                                    } catch (apiError) {
+                                        console.error('API error:', apiError);
+                                        
+                                        // Set a more informative error message
+                                        setError(`Connection to AI evaluation service failed. Please use the manual download option below.`);
+                                        
+                                        // Still store the processed data so the manual download option works
+                                        setProcessedData(prevData => ({
+                                            ...prevData,
+                                            evaluationResults: {
+                                                error: true,
+                                                message: `Failed to connect to AI service: ${apiError.message}`,
+                                                timestamp: new Date().toISOString()
+                                            }
+                                        }));
+                                        
+                                        // Don't close the modal on error - allow manual download
+                                        setIsEvaluating(false);
+                                        setCountdown(0);
+                                    }
+
+                                    const timer = setInterval(() => {
+                                        setCountdown((prev) => {
+                                            if (prev <= 1) {
+                                                clearInterval(timer);
+                                                setTimeout(() => {
+                                                    setIsEvaluating(false);
+                                                    setCountdown(10);
+                                                    onClose();
+                                                }, 1000);
+                                                return 0;
+                                            }
+                                            return prev - 1;
+                                        });
+                                    }, 1000);
+                                } catch (err) {
+                                    console.error('Error processing documents:', err);
+                                    setError('Failed to process documents');
+                                    setIsEvaluating(false);
+                                }
+                            }}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            disabled={isEvaluating}
+                        >
+                            Confirm Evaluation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* SmartGrade Loading Modal */}
+            {isEvaluating && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 max-w-sm w-full mx-4 text-center">
+                        <div className="mb-4">
+                            <ArrowPathIcon className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">SmartGrade is Working</h3>
+                        <p className="text-gray-600 mb-4">Processing your evaluation...</p>
+                        <div className="text-3xl font-bold text-blue-600">{countdown}</div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default EvaluationModal;
