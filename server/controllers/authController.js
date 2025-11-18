@@ -79,6 +79,7 @@ const registerUser = async (req, res) => {
                     const guardianData = {
                         name: guardianInfo.name,
                         email: guardianInfo.email,
+                        phoneNumber: guardianInfo.phoneNumber || guardianInfo.phone, // Support both field names
                         password: req.body.password, // Use the same password as student
                         role: 'guardian',
                         student: user._id // Now we can reference the student

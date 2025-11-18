@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { XMarkIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ArrowPathIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 
 // Import sub-components
@@ -11,7 +11,6 @@ import ShortAnswerSummary from './evaluation/ShortAnswerSummary';
 import ProcessedDataDisplay from './evaluation/ProcessedDataDisplay';
 import EvaluationResults from './evaluation/EvaluationResults';
 import EvaluationLoadingModal from './evaluation/EvaluationLoadingModal';
-import LlmApiConfigModal from './evaluation/LlmApiConfigModal';
 
 // Import document processing functions
 import { processDocument } from './evaluation/documentProcessing';
@@ -27,7 +26,6 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [countdown, setCountdown] = useState(30); // Increased time for LLM processing
-    const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
     const [processedData, setProcessedData] = useState({
         studentSubmission: {
             mcqs: [],
@@ -107,12 +105,6 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
             setLoading(false);
         }
     };
-    
-    // Handle saving the LLM API URL from the config modal
-    const handleSaveApiUrl = (url) => {
-        console.log('LLM API URL updated:', url);
-        // We'll use this URL when sending data for evaluation
-    };
 
     if (!isOpen) return null;
 
@@ -122,13 +114,6 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-semibold text-gray-900">Evaluate Submission</h3>
                     <div className="flex items-center space-x-2">
-                        <button
-                            onClick={() => setIsConfigModalOpen(true)}
-                            className="text-gray-500 hover:text-gray-700 flex items-center"
-                            title="Configure LLM API"
-                        >
-                            <Cog6ToothIcon className="h-5 w-5" />
-                        </button>
                         <button
                             onClick={onClose}
                             className="text-gray-500 hover:text-gray-700"
@@ -180,11 +165,17 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                         try {
                                             setIsSaving(true);
                                             // Save the evaluation results to the database
-                                            await saveEvaluationResults(
+                                            const saveResponse = await saveEvaluationResults(
                                                 studentSubmission._id,
                                                 processedData.evaluationResults
                                             );
                                             setSaveSuccess(true);
+                                            
+                                            // Log notification status if available
+                                            if (saveResponse.notificationSent) {
+                                                console.log('✓ Guardian notified successfully');
+                                            }
+                                            
                                             // Show success message for 2 seconds before closing
                                             setTimeout(() => {
                                                 onClose();
@@ -224,6 +215,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                     <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
                                     <h3 className="text-xl font-semibold text-green-700 mb-2">Evaluation Saved!</h3>
                                     <p className="text-green-600">Results are now available to the student.</p>
+                                    <p className="text-sm text-green-500 mt-2">Guardian has been notified via SMS.</p>
                                 </div>
                             </div>
                         )}
@@ -264,13 +256,6 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                     <button
                         onClick={async () => {
                             try {
-                                // First check if we have the LLM API URL configured
-                                const apiUrl = sessionStorage.getItem('llmApiUrl') || import.meta.env.VITE_LLM_API_URL;
-                                if (!apiUrl) {
-                                    setIsConfigModalOpen(true);
-                                    return;
-                                }
-                                
                                 setIsEvaluating(true);
                                 setError(null);
                                 
@@ -283,7 +268,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                 // Update the state with processed data
                                 setProcessedData(newProcessedData);
                                 
-                                // Send the processed data to the LLM API for evaluation
+                                // Send the processed data to the backend API for evaluation
                                 try {
                                     // Use the evaluation service to send data to the API
                                     await sendEvaluationToApi(
@@ -296,25 +281,25 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                             }));
                                             
                                             // Store the evaluation results in the state for teacher review
-                                            console.log('LLM Evaluation completed successfully');
+                                            console.log('AI Evaluation completed successfully');
                                             // Close the loading modal immediately when we get results
                                             setIsEvaluating(false);
                                             setCountdown(30);
                                         },
                                         // Error callback
                                         (errorMessage) => {
-                                            setError(`LLM Evaluation failed: ${errorMessage}`);
+                                            setError(`AI Evaluation failed: ${errorMessage}`);
                                             setIsEvaluating(false);
                                         }
                                     );
                                 } catch (apiError) {
                                     console.error('API error:', apiError);
-                                    setError(`Failed to submit to LLM API: ${apiError.message}`);
+                                    setError(`Failed to submit to backend API: ${apiError.message}`);
                                     setIsEvaluating(false);
                                 }
                             } catch (err) {
                                 console.error('Error processing documents:', err);
-                                setError('Failed to process documents for LLM evaluation');
+                                setError('Failed to process documents for AI evaluation');
                                 setIsEvaluating(false);
                             }
                         }}
@@ -332,13 +317,6 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                     </button>
                 </div>
             </div>
-
-            {/* LLM API Configuration Modal */}
-            <LlmApiConfigModal
-                isOpen={isConfigModalOpen}
-                onClose={() => setIsConfigModalOpen(false)}
-                onSave={handleSaveApiUrl}
-            />
 
             {/* AI Evaluation Loading Modal */}
             <EvaluationLoadingModal isOpen={isEvaluating} />

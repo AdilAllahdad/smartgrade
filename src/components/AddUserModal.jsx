@@ -14,7 +14,8 @@ const AddUserModal = ({ onClose, onSubmit, role }) => {
         semester: '',
         section: '',
         guardianName: '',
-        guardianEmail: ''
+        guardianEmail: '',
+        guardianPhone: ''
     });
 
     const validateForm = () => {
@@ -30,8 +31,16 @@ const AddUserModal = ({ onClose, onSubmit, role }) => {
             }
             
             // Check if guardian information is provided
-            if (!formData.guardianName || !formData.guardianEmail) {
-                setError('Guardian name and email are required for students');
+            if (!formData.guardianName || !formData.guardianEmail || !formData.guardianPhone) {
+                setError('Guardian name, email and phone number are required for students');
+                return false;
+            }
+            
+            // Validate phone number format
+            const phonePattern = /^(\+?\d{1,3})?[\s-]?\d{10,12}$/;
+            const cleanPhone = formData.guardianPhone.replace(/[\s-]/g, '');
+            if (!phonePattern.test(formData.guardianPhone) || cleanPhone.length < 10) {
+                setError('Invalid phone number format. Use format: +923001234567 or 03001234567');
                 return false;
             }
             
@@ -92,10 +101,11 @@ const AddUserModal = ({ onClose, onSubmit, role }) => {
                 userData.section = formData.section;
                 
                 // Make sure guardian information is properly formatted
-                if (formData.guardianName && formData.guardianEmail) {
+                if (formData.guardianName && formData.guardianEmail && formData.guardianPhone) {
                     userData.guardian = {
                         name: formData.guardianName,
-                        email: formData.guardianEmail
+                        email: formData.guardianEmail,
+                        phoneNumber: formData.guardianPhone
                         // Note: password is not needed here, server will use student password
                     };
                 }
@@ -273,6 +283,24 @@ const AddUserModal = ({ onClose, onSubmit, role }) => {
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                         required
                                     />
+                                </div>
+                                <div className="mt-4">
+                                    <label htmlFor="guardianPhone" className="block text-sm font-medium text-gray-700">
+                                        Guardian Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        id="guardianPhone"
+                                        name="guardianPhone"
+                                        value={formData.guardianPhone}
+                                        onChange={handleInputChange}
+                                        placeholder="+923001234567 or 03001234567"
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        required
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        Used for SMS notifications about exam results
+                                    </p>
                                 </div>
                                 <div className="mt-2">
                                     <p className="text-xs text-gray-500">

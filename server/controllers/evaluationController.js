@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Result = require('../models/resultModel');
 const ExamPaper = require('../models/examPaperModel');
+const { evaluateSubmission: aiEvaluate } = require('../services/evaluationService');
+const { notifyGuardianOfResult } = require('../services/notificationService');
 
 // Get the StudentSubmission model from mongoose directly
 const mongoose = require('mongoose');
@@ -12,101 +14,50 @@ const StudentSubmission = mongoose.model('StudentSubmission');
 const evaluateSubmission = asyncHandler(async (req, res) => {
     try {
         // Handle both FormData and direct JSON submissions
-        let studentSubmission, answerSheet;
+        let evaluationData;
         
         if (req.body.data) {
             // Handle FormData submission
-            const parsedData = JSON.parse(req.body.data);
-            studentSubmission = parsedData.studentSubmission;
-            answerSheet = parsedData.answerSheet;
+            evaluationData = JSON.parse(req.body.data);
         } else {
             // Handle direct JSON submission
-            studentSubmission = req.body.studentSubmission; 
-            answerSheet = req.body.answerSheet;
+            evaluationData = req.body;
         }
 
         console.log('Received evaluation request:', {
             studentData: {
-                submissionId: studentSubmission?.metadata?.submissionId,
-                filename: studentSubmission?.metadata?.filename
+                submissionId: evaluationData?.studentSubmission?.metadata?.submissionId,
+                filename: evaluationData?.studentSubmission?.metadata?.filename
             },
             answerData: {
-                examId: answerSheet?.metadata?.examId,
-                filename: answerSheet?.metadata?.filename
+                examId: evaluationData?.answerSheet?.metadata?.examId,
+                filename: evaluationData?.answerSheet?.metadata?.filename
             }
         });
 
-        // Perform evaluation logic here
-        // This is where you would compare the student's answers with the correct answers
-
-        // Example evaluation (simplified)
-        let totalScore = 0;
-        let maxScore = 0;
-        const evaluationResults = {
-            mcqResults: [],
-            shortQuestionResults: []
-        };
-
-        // Evaluate MCQs
-        if (studentSubmission.mcqs && answerSheet.mcqs) {
-            for (const studentMCQ of studentSubmission.mcqs) {
-                const matchingAnswer = answerSheet.mcqs.find(
-                    mcq => mcq.questionNumber === studentMCQ.questionNumber
-                );
-
-                if (matchingAnswer) {
-                    const isCorrect = studentMCQ.selectedOption === matchingAnswer.correctOption;
-                    const questionScore = isCorrect ? 1 : 0;
-                    totalScore += questionScore;
-                    maxScore += 1;
-
-                    evaluationResults.mcqResults.push({
-                        questionNumber: studentMCQ.questionNumber,
-                        studentAnswer: studentMCQ.selectedOption,
-                        correctAnswer: matchingAnswer.correctOption,
-                        isCorrect,
-                        score: questionScore
-                    });
-                }
-            }
-        }
-
-        // Evaluate Short Questions (simplified - this would normally be done by a teacher)
-        // For now, we'll just record the answers for manual review
-        if (studentSubmission.shortQuestions && answerSheet.shortQuestions) {
-            for (const studentQuestion of studentSubmission.shortQuestions) {
-                const matchingAnswer = answerSheet.shortQuestions.find(
-                    q => q.questionNumber === studentQuestion.questionNumber
-                );
-
-                if (matchingAnswer) {
-                    // For short questions, we just store the answers for manual review
-                    evaluationResults.shortQuestionResults.push({
-                        questionNumber: studentQuestion.questionNumber,
-                        studentAnswer: studentQuestion.answer,
-                        modelAnswer: matchingAnswer.answer
-                    });
-                }
-            }
-        }
-
-        // Calculate percentage score
-        const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+        // Use the AI evaluation service
+        const evaluationResults = await aiEvaluate(evaluationData);
 
         // Only create a result record if we have complete data
-        if (answerSheet?.metadata?.examId && studentSubmission?.metadata?.submissionId) {
+        if (evaluationData?.answerSheet?.metadata?.examId && 
+            evaluationData?.studentSubmission?.metadata?.submissionId) {
             try {
                 // For development - create a placeholder user ID if not authenticated
                 const userId = req.user?._id || '65e1963310226833e4bfd1f1'; // Default teacher ID
                 
                 const result = new Result({
                     student: userId, // Use placeholder ID in development
-                    exam: answerSheet.metadata.examId,
-                    submission: studentSubmission.metadata.submissionId,
-                    score: totalScore,
-                    maxScore: maxScore,
-                    percentage: percentage,
-                    evaluationDetails: evaluationResults,
+                    exam: evaluationData.answerSheet.metadata.examId,
+                    submission: evaluationData.studentSubmission.metadata.submissionId,
+                    score: evaluationResults.scoreSummary.totalObtained,
+                    maxScore: evaluationResults.scoreSummary.totalMarks,
+                    percentage: evaluationResults.scoreSummary.totalMarks > 0 
+                        ? Math.round((evaluationResults.scoreSummary.totalObtained / evaluationResults.scoreSummary.totalMarks) * 100)
+                        : 0,
+                    evaluationDetails: {
+                        mcqResults: evaluationResults.mcqResults,
+                        shortQuestionResults: evaluationResults.shortQuestionResults
+                    },
                     gradedBy: userId,
                     gradedAt: new Date()
                 });
@@ -124,12 +75,7 @@ const evaluateSubmission = asyncHandler(async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Evaluation completed successfully',
-            result: {
-                score: totalScore,
-                maxScore,
-                percentage,
-                evaluationDetails: evaluationResults
-            }
+            ...evaluationResults
         });
     } catch (error) {
         console.error('Evaluation error:', error);
@@ -224,6 +170,47 @@ const saveEvaluationResults = asyncHandler(async (req, res) => {
         submission.evaluatedAt = new Date();
         submission.resultId = result._id;  // Connect submission to the result
         await submission.save();
+        
+        // Send notification to guardian
+        try {
+            // Populate student's guardian information
+            const Student = mongoose.model('Student');
+            const Guardian = mongoose.model('Guardian');
+            
+            const studentWithGuardian = await Student.findById(submission.student._id).populate('guardian');
+            
+            if (studentWithGuardian && studentWithGuardian.guardian) {
+                const guardian = await Guardian.findById(studentWithGuardian.guardian);
+                
+                if (guardian && guardian.phoneNumber) {
+                    console.log('Sending notification to guardian...');
+                    
+                    const notificationResult = await notifyGuardianOfResult(
+                        guardian,
+                        studentWithGuardian,
+                        submission.examPaper,
+                        {
+                            score: scoreSummary.totalObtained,
+                            maxScore: scoreSummary.totalMarks,
+                            percentage: result.percentage
+                        }
+                    );
+                    
+                    if (notificationResult.success) {
+                        console.log('✓ Guardian notification sent successfully');
+                    } else {
+                        console.warn('⚠ Guardian notification failed:', notificationResult.error);
+                    }
+                } else {
+                    console.warn('⚠ Guardian phone number not available');
+                }
+            } else {
+                console.warn('⚠ No guardian linked to student');
+            }
+        } catch (notificationError) {
+            // Log but don't fail the request if notification fails
+            console.error('Error sending guardian notification:', notificationError);
+        }
         
         res.status(200).json({
             success: true,

@@ -23,6 +23,17 @@ const guardianSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid email address!`
         }
     },
+    phoneNumber: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function(v) {
+                // Supports formats: +92XXXXXXXXXX, 03XXXXXXXXX, +1XXXXXXXXXX
+                return /^(\+\d{1,3})?\d{10,12}$/.test(v.replace(/[\s-]/g, ''));
+            },
+            message: props => `${props.value} is not a valid phone number!`
+        }
+    },
     password: {
         type: String,
         required: true
