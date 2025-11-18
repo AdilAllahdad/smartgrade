@@ -9,17 +9,10 @@ import React from 'react';
  */
 export const sendEvaluationToApi = async (processedData, onSuccess, onError) => {
     try {
-        // Get the ngrok URL from your LLM service
-        // NOTE: You need to update this URL with your actual ngrok URL each time you start the service
-        const ngrokUrl = sessionStorage.getItem('llmApiUrl') || import.meta.env.VITE_LLM_API_URL || prompt('Please enter the LLM API URL from your ngrok tunnel:');
+        // Use the backend API URL instead of external ngrok URL
+        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
         
-        // Store the URL for future use
-        if (ngrokUrl) {
-            sessionStorage.setItem('llmApiUrl', ngrokUrl);
-        }
-        
-        const API_BASE = ngrokUrl;
-        console.log('Sending data to:', `${API_BASE}/evaluate`);
+        console.log('Sending data to:', `${API_BASE_URL}/evaluate`);
         
         // Ensure marks are included in all questions for evaluation
         if (processedData.answerSheet && processedData.answerSheet.mcqs) {
@@ -42,11 +35,12 @@ export const sendEvaluationToApi = async (processedData, onSuccess, onError) => 
         
         console.log('Data being sent (with marks):', processedData);
 
-        // Send data to the LLM API with proper CORS handling
-        const response = await fetch(`${API_BASE}/evaluate`, {
+        // Send data to the backend API
+        const response = await fetch(`${API_BASE_URL}/evaluate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(processedData)
         });
@@ -55,7 +49,7 @@ export const sendEvaluationToApi = async (processedData, onSuccess, onError) => 
             throw new Error(`API returned status ${response.status}: ${response.statusText}`);
         }
         
-        // Parse the actual response from the LLM API
+        // Parse the actual response from the backend
         const evaluationResults = await response.json();
         console.log('Received evaluation results:', evaluationResults);
         
@@ -64,7 +58,7 @@ export const sendEvaluationToApi = async (processedData, onSuccess, onError) => 
             onSuccess(evaluationResults);
         }
         
-        console.log('Evaluation data processed by LLM model');
+        console.log('Evaluation data processed by AI model');
     } catch (error) {
         console.error('API error:', error);
         if (onError) {
