@@ -56,7 +56,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
             console.log('Fetching exam details for examId:', examId);
             
             // Get the API base URL from environment or fallback to a default
-            const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
             
             // Get the exam paper details which includes the answer sheets
             const examResponse = await fetch(`${API_BASE_URL}/exam-papers/${examId}`, {

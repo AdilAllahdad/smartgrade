@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { API_URL } from '../config/api.config';
 
-// Define API_BASE_URL
-export const API_BASE_URL = 'http://localhost:5000/api';
+// Export API_BASE_URL for backward compatibility
+export const API_BASE_URL = API_URL;
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
     },

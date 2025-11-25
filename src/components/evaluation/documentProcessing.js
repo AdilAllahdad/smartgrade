@@ -419,7 +419,7 @@ export const processDocument = async (file, isAnswerSheet = false) => {
     }
 
     // Get the API base URL from environment or fallback to a default
-    const API_BASE = import.meta.env?.VITE_API_URL?.split('/api')[0] || 'http://localhost:5000';
+    const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5000';
     
     // Use the most appropriate URL available
     let fileUrl = file.fileUrl;

@@ -26,7 +26,7 @@ export default function StudentResultPage() {
                 setLoading(true);
                 
                 // Fetch the exam details
-                const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
                 const examResponse = await fetch(`${API_BASE_URL}/exam-papers/${examId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -121,7 +121,7 @@ export default function StudentResultPage() {
         
         try {
             // Make sure to use the full API URL with the submission path
-            const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+            const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
             
             const response = await fetch(`${API_BASE_URL}/student-submissions/submissions/download/${result._id}`, {
                 headers: {

@@ -23,7 +23,7 @@ const StudentExamSubmission = ({ onSubmitSuccess }) => {
     const fetchAvailableExams = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:5000/api/exam-papers', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -57,7 +57,7 @@ const StudentExamSubmission = ({ onSubmitSuccess }) => {
     const fetchPreviousSubmissions = async () => {
         try {
             setLoadingSubmissions(true);
-            const response = await fetch('http://localhost:5000/api/student-submissions/submissions', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/submissions`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -120,7 +120,7 @@ const StudentExamSubmission = ({ onSubmitSuccess }) => {
             
             console.log('Submitting exam:', selectedExam);
             
-            const response = await fetch('http://localhost:5000/api/student-submissions/submit-exam', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/submit-exam`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

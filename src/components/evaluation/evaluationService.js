@@ -10,7 +10,7 @@ import React from 'react';
 export const sendEvaluationToApi = async (processedData, onSuccess, onError) => {
     try {
         // Use the backend API URL instead of external ngrok URL
-        const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
         
         console.log('Sending data to:', `${API_BASE_URL}/evaluate`);
         

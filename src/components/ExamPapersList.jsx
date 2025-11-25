@@ -65,7 +65,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
             setLoadingSubmissions(true);
             console.log('Fetching student submissions for exam:', examId);
             
-            const response = await fetch(`http://localhost:5000/api/student-submissions/exam/${examId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -150,7 +150,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
     const fetchExamPapers = async () => {
         try {
             // Fetch exam papers
-            const papersResponse = await fetch('http://localhost:5000/api/exam-papers', {
+            const papersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -165,7 +165,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
             
             // Only fetch answer sheets for teachers
             if (user && user.role === 'teacher') {
-                const answersResponse = await fetch('http://localhost:5000/api/answer-sheets', {
+                const answersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/answer-sheets`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -203,7 +203,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                 
                 // Then fetch submission status for each paper
                 try {
-                    const submissionsResponse = await fetch('http://localhost:5000/api/student-submissions/submissions', {
+                    const submissionsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/submissions`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -273,7 +273,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                 downloadUrl = '/' + downloadUrl;
             }
             
-            console.log('Full download URL:', `http://localhost:5000${downloadUrl}`);
+            console.log('Full download URL:', `${import.meta.env.VITE_API_BASE_URL}${downloadUrl}`);
             
             const token = localStorage.getItem('token');
             if (!token) {
@@ -282,7 +282,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                 return;
             }
             
-            const response = await fetch(`http://localhost:5000${downloadUrl}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${downloadUrl}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -337,7 +337,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                 downloadUrl = '/' + downloadUrl;
             }
             
-            console.log('Full preview URL:', `http://localhost:5000${downloadUrl}`);
+            console.log('Full preview URL:', `${import.meta.env.VITE_API_BASE_URL}${downloadUrl}`);
             
             const token = localStorage.getItem('token');
             if (!token) {
@@ -351,7 +351,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
             setConvertingDocx(false);
             setDocxError(null);
             
-            const response = await fetch(`http://localhost:5000${downloadUrl}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${downloadUrl}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },

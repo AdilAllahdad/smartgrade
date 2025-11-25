@@ -50,7 +50,7 @@ const ExamPaperUpload = () => {
             formData.append('semester', semester);
             formData.append('section', section);
 
-            const response = await fetch('http://localhost:5000/api/exam-papers/upload', {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers/upload`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

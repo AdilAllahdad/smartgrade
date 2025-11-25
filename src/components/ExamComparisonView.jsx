@@ -38,14 +38,14 @@ const ExamComparisonView = ({ examId, studentId }) => {
             setLoading(true);
             
             // Fetch the answer sheet for this exam
-            const answerSheetResponse = await fetch(`http://localhost:5000/api/answer-sheets/exam/${examId}`, {
+            const answerSheetResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/answer-sheets/exam/${examId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
             // Fetch the student's submission for this exam
-            const studentSubmissionResponse = await fetch(`http://localhost:5000/api/student-submissions/exam/${examId}/student/${studentId}`, {
+            const studentSubmissionResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}/student/${studentId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -113,7 +113,7 @@ const ExamComparisonView = ({ examId, studentId }) => {
         
         try {
             // Save note to the backend
-            await fetch(`http://localhost:5000/api/student-submissions/${studentSubmission._id}/notes`, {
+            await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/${studentSubmission._id}/notes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ const ExamComparisonView = ({ examId, studentId }) => {
         try {
             setIsSaving(true);
             
-            await fetch(`http://localhost:5000/api/student-submissions/${studentSubmission._id}/score`, {
+            await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/${studentSubmission._id}/score`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

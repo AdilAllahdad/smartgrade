@@ -44,7 +44,7 @@ const StudentSubmissionsPage = () => {
                 setLoading(true);
                 
                 // Fetch exam details
-                const examResponse = await fetch(`http://localhost:5000/api/exam-papers/${examId}`, {
+                const examResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers/${examId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -58,7 +58,7 @@ const StudentSubmissionsPage = () => {
 
                 // Fetch answer sheets if user is a teacher
                 if (user && user.role === 'teacher') {
-                    const answersResponse = await fetch('http://localhost:5000/api/answer-sheets', {
+                    const answersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/answer-sheets`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
@@ -78,7 +78,7 @@ const StudentSubmissionsPage = () => {
                 setExamDetails(examData);
 
                 // Fetch student submissions for this exam
-                const submissionsResponse = await fetch(`http://localhost:5000/api/student-submissions/exam/${examId}`, {
+                const submissionsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -107,7 +107,7 @@ const StudentSubmissionsPage = () => {
         setSelectedStudentFile(null);
         try {
             // Use the correct API endpoint
-            const res = await fetch(`http://localhost:5000/api/student-submissions/exam/${examId}/student/${studentId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}/student/${studentId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -116,7 +116,7 @@ const StudentSubmissionsPage = () => {
             const data = await res.json();
             
             // Construct the file URL using the new GridFS endpoint
-            const fileUrl = `http://localhost:5000/api/student-submissions/file/${data.filename}`;
+            const fileUrl = `${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/file/${data.filename}`;
             setSelectedStudentFile(fileUrl);
         } catch (err) {
             setSelectedStudentFile(null);
@@ -244,7 +244,7 @@ const StudentSubmissionsPage = () => {
                                                     <button
                                                         onClick={() => {
                                                             const url = sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`;
-                                                            const fileUrl = `http://localhost:5000${url}`;
+                                                            const fileUrl = `${import.meta.env.VITE_API_BASE_URL}${url}`;
                                                             
                                                             if (/\.docx$/i.test(sheet.filename)) {
                                                                 setPreviewFile({
@@ -262,7 +262,7 @@ const StudentSubmissionsPage = () => {
                                                         Preview
                                                     </button>
                                                     <a
-                                                        href={`http://localhost:5000${sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`}`}
+                                                        href={`${import.meta.env.VITE_API_BASE_URL}${sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`}`}
                                                         download={sheet.filename}
                                                         className="flex items-center px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700"
                                                     >
@@ -374,11 +374,11 @@ const StudentSubmissionsPage = () => {
                                                             
                                                             setSelectedSubmission({
                                                                 ...submission,
-                                                                fileUrl: `http://localhost:5000/api/student-submissions/file/${submission.filename}`,
+                                                                fileUrl: `${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/file/${submission.filename}`,
                                                                 student,
                                                                 answerSheet: examAnswerSheet ? {
                                                                     ...examAnswerSheet,
-                                                                    fileUrl: `http://localhost:5000${examAnswerSheet.downloadUrl || `/api/answer-sheets/download/${examAnswerSheet._id}`}`
+                                                                    fileUrl: `${import.meta.env.VITE_API_BASE_URL}${examAnswerSheet.downloadUrl || `/api/answer-sheets/download/${examAnswerSheet._id}`}`
                                                                 } : null
                                                             });
                                                             setShowEvaluationModal(true);
