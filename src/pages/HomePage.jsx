@@ -74,35 +74,37 @@ export default function HomePage() {
     ];
 
     return (
-        <div className="fixed inset-0 w-screen h-screen bg-[#1e3a8a] flex flex-col items-center justify-between overflow-hidden">
+        <div className="min-h-screen w-full bg-[#1e3a8a] flex flex-col items-center overflow-x-hidden overflow-y-auto">
             {/* Header Section */}
-            <div className={`w-full flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 transform transition-all duration-1000 
+            <div className={`w-full flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 pt-8 sm:pt-12 transform transition-all duration-1000 
                 ${showWelcome ? 'translate-y-0 opacity-100' : '-translate-y-20 opacity-0'}`}>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold text-center mb-2 sm:mb-4">
                     SmartGrade
                 </h1>
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 text-center font-light max-w-2xl">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 text-center font-light max-w-2xl px-4">
                     Empowering Education Through Smart Evaluation
                 </p>
             </div>
 
             {/* Role Selection Cards */}
-            <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-center">
-                {roles.map((role) => (
-                    <RoleCard
-                        key={role.id}
-                        role={role.id}
-                        icon={role.icon}
-                        title={role.title}
-                        description={role.description}
-                        isActive={activeCard === role.id}
-                        onClick={() => handleRoleSelect(role.id)}
-                    />
-                ))}
+            <div className="w-full max-w-7xl mx-auto px-4 py-8 sm:py-12 md:py-16 flex-grow flex items-center">
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 place-items-center">
+                    {roles.map((role) => (
+                        <RoleCard
+                            key={role.id}
+                            role={role.id}
+                            icon={role.icon}
+                            title={role.title}
+                            description={role.description}
+                            isActive={activeCard === role.id}
+                            onClick={() => handleRoleSelect(role.id)}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/* Footer Note */}
-            <div className="w-full p-4 text-center text-blue-100 text-sm">
+            <div className="w-full p-4 pb-6 text-center text-blue-100 text-sm mt-auto">
                 © 2025 SmartGrade. All rights reserved.
             </div>
         </div>
