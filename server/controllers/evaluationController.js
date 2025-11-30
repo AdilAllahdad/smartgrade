@@ -172,6 +172,12 @@ const saveEvaluationResults = asyncHandler(async (req, res) => {
         await submission.save();
         
         // Send notification to guardian
+        let notificationStatus = {
+            sent: false,
+            message: 'No guardian notification sent',
+            details: null
+        };
+        
         try {
             // Populate student's guardian information
             const Student = mongoose.model('Student');
@@ -198,24 +204,56 @@ const saveEvaluationResults = asyncHandler(async (req, res) => {
                     
                     if (notificationResult.success) {
                         console.log('✓ Guardian notification sent successfully');
+                        notificationStatus = {
+                            sent: true,
+                            message: notificationResult.status === 'logged' 
+                                ? 'SMS logged (Twilio not configured)' 
+                                : 'SMS sent successfully',
+                            details: {
+                                guardianName: guardian.name,
+                                guardianPhone: notificationResult.to,
+                                messageId: notificationResult.messageId,
+                                status: notificationResult.status,
+                                isProduction: notificationResult.status !== 'logged'
+                            }
+                        };
                     } else {
                         console.warn('⚠ Guardian notification failed:', notificationResult.error);
+                        notificationStatus = {
+                            sent: false,
+                            message: 'SMS failed to send',
+                            details: { error: notificationResult.error }
+                        };
                     }
                 } else {
                     console.warn('⚠ Guardian phone number not available');
+                    notificationStatus = {
+                        sent: false,
+                        message: 'Guardian has no phone number'
+                    };
                 }
             } else {
                 console.warn('⚠ No guardian linked to student');
+                notificationStatus = {
+                    sent: false,
+                    message: 'No guardian linked to student'
+                };
             }
         } catch (notificationError) {
             // Log but don't fail the request if notification fails
             console.error('Error sending guardian notification:', notificationError);
+            notificationStatus = {
+                sent: false,
+                message: 'Notification error occurred',
+                details: { error: notificationError.message }
+            };
         }
         
         res.status(200).json({
             success: true,
             message: 'Evaluation results saved successfully',
-            resultId: result._id
+            resultId: result._id,
+            notification: notificationStatus
         });
         
     } catch (error) {

@@ -169,17 +169,29 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                                 studentSubmission._id,
                                                 processedData.evaluationResults
                                             );
+                                            
+                                            // Store notification status for display
+                                            setProcessedData(prev => ({
+                                                ...prev,
+                                                notificationStatus: saveResponse.notification
+                                            }));
+                                            
                                             setSaveSuccess(true);
                                             
-                                            // Log notification status if available
-                                            if (saveResponse.notificationSent) {
-                                                console.log('✓ Guardian notified successfully');
+                                            // Log notification status
+                                            if (saveResponse.notification?.sent) {
+                                                console.log('✓ Guardian notification:', saveResponse.notification.message);
+                                                if (saveResponse.notification.details) {
+                                                    console.log('  Details:', saveResponse.notification.details);
+                                                }
+                                            } else {
+                                                console.warn('⚠ Guardian notification:', saveResponse.notification?.message);
                                             }
                                             
-                                            // Show success message for 2 seconds before closing
+                                            // Show success message for 3 seconds before closing
                                             setTimeout(() => {
                                                 onClose();
-                                            }, 2000);
+                                            }, 3000);
                                         } catch (error) {
                                             setError(`Failed to save results: ${error.message}`);
                                             setIsSaving(false);
@@ -211,11 +223,39 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                         {/* Success Message */}
                         {saveSuccess && (
                             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded">
-                                <div className="text-center p-6 bg-green-50 rounded-lg shadow-lg border border-green-200">
+                                <div className="text-center p-6 bg-green-50 rounded-lg shadow-lg border border-green-200 max-w-md">
                                     <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
                                     <h3 className="text-xl font-semibold text-green-700 mb-2">Evaluation Saved!</h3>
-                                    <p className="text-green-600">Results are now available to the student.</p>
-                                    <p className="text-sm text-green-500 mt-2">Guardian has been notified via SMS.</p>
+                                    <p className="text-green-600 mb-3">Results are now available to the student.</p>
+                                    
+                                    {/* Notification Status */}
+                                    {processedData.notificationStatus && (
+                                        <div className={`mt-3 p-3 rounded-lg ${
+                                            processedData.notificationStatus.sent 
+                                                ? 'bg-blue-50 border border-blue-200' 
+                                                : 'bg-yellow-50 border border-yellow-200'
+                                        }`}>
+                                            <p className={`text-sm font-medium ${
+                                                processedData.notificationStatus.sent 
+                                                    ? 'text-blue-700' 
+                                                    : 'text-yellow-700'
+                                            }`}>
+                                                📱 {processedData.notificationStatus.message}
+                                            </p>
+                                            
+                                            {processedData.notificationStatus.details?.guardianName && (
+                                                <p className="text-xs text-gray-600 mt-1">
+                                                    Guardian: {processedData.notificationStatus.details.guardianName}
+                                                </p>
+                                            )}
+                                            
+                                            {processedData.notificationStatus.details?.isProduction === false && (
+                                                <p className="text-xs text-orange-600 mt-1">
+                                                    ⚠️ Configure Twilio credentials in server/.env to send real SMS
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

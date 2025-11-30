@@ -1,19 +1,14 @@
 const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const path = require('path');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
-console.log('Setting up GridFS storage with MongoDB URL');
+console.log('Setting up GridFS storage with existing mongoose connection');
 
-// Create storage engine with error handling
+// Create storage engine using the existing mongoose connection
 const storage = new GridFsStorage({
-    url: process.env.MONGODB_URI,
-    options: { 
-        useNewUrlParser: true, 
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 15000, // Increase timeouts
-        connectTimeoutMS: 15000
-    },
+    db: mongoose.connection,
     file: (req, file) => {
         console.log('Processing file for upload:', file.originalname);
         const filename = `${Date.now()}-${file.originalname}`;
@@ -27,8 +22,8 @@ const storage = new GridFsStorage({
 });
 
 // Add error handler for storage engine
-storage.on('connection', () => {
-    console.log('GridFS storage connected successfully');
+storage.on('connection', (db) => {
+    console.log('GridFS storage using existing mongoose connection');
 });
 
 storage.on('connectionFailed', (err) => {
