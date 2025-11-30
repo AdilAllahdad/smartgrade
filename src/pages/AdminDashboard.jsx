@@ -194,7 +194,7 @@ export default function AdminDashboard() {
         <DashboardLayout allowedRoles={[UserRoles.ADMIN]}>
             {/* Add the animation styles */}
             <style dangerouslySetInnerHTML={{ __html: notificationAnimationStyle }} />
-            <div className="space-y-10">
+            <div className="space-y-6 md:space-y-10 px-2 sm:px-4 md:px-0">
                 {/* Stats Section */}
                 <StatsSection 
                     stats={stats} 

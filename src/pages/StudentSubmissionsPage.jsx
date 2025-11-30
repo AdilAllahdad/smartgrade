@@ -168,47 +168,48 @@ const StudentSubmissionsPage = () => {
 
     return (
         <DashboardLayout allowedRoles={['teacher', 'admin']}>
-            <div className="space-y-8">
+            <div className="space-y-4 sm:space-y-6 lg:space-y-8">
                 {/* Back Button and Page Title */}
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
                     <button 
                         onClick={() => navigate('/teacher')}
-                        className="flex items-center text-blue-600 hover:text-blue-800"
+                        className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
                     >
                         <ArrowLeftIcon className="h-5 w-5 mr-1" />
-                        Back to Dashboard
+                        <span className="text-sm sm:text-base">Back to Dashboard</span>
                     </button>
-                    <h1 className="text-2xl font-bold text-gray-900">Student Submissions</h1>
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Student Submissions</h1>
                 </div>
 
                 {/* Exam Details Card */}
                 {examDetails && (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 border border-blue-100">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-900 mb-2">{examDetails.title}</h2>
-                                <div className="flex flex-wrap gap-3 mt-3">
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                        <CalendarIcon className="h-4 w-4 mr-1" />
-                                        {new Date(examDetails.uploadDate).toLocaleDateString()}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 border border-blue-100">
+                        <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                            <div className="flex-1">
+                                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2">{examDetails.title}</h2>
+                                <div className="flex flex-wrap gap-2 sm:gap-3 mt-3">
+                                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-blue-100 text-blue-800">
+                                        <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                        <span className="hidden sm:inline">{new Date(examDetails.uploadDate).toLocaleDateString()}</span>
+                                        <span className="sm:hidden">{new Date(examDetails.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                                     </span>
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                                        <DocumentTextIcon className="h-4 w-4 mr-1" />
-                                        {examDetails.semester} Semester
+                                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800">
+                                        <DocumentTextIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                                        {examDetails.semester} Sem
                                     </span>
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                        <UserIcon className="h-4 w-4 mr-1" />
+                                    <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800">
+                                        <UserIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                                         Section {examDetails.section}
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex w-full lg:w-auto">
                                 <a 
                                     href={examDetails.downloadUrl} 
                                     download
-                                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                    className="flex items-center justify-center w-full lg:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                                 >
-                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                    <DocumentArrowDownIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                     Download Exam
                                 </a>
                             </div>
@@ -216,9 +217,9 @@ const StudentSubmissionsPage = () => {
 
                         {/* Associated Answer Sheets Section */}
                         {user && user.role === 'teacher' && (
-                            <div className="mt-5 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-100">
-                                <h4 className="font-semibold text-lg mb-3 flex items-center">
-                                    <DocumentCheckIcon className="h-5 w-5 text-green-600 mr-2" />
+                            <div className="mt-4 sm:mt-5 bg-gradient-to-r from-green-50 to-emerald-50 p-3 sm:p-4 rounded-lg border border-green-100">
+                                <h4 className="font-semibold text-base sm:text-lg mb-3 flex items-center">
+                                    <DocumentCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-2" />
                                     Associated Answer Sheets
                                 </h4>
                                 
@@ -230,17 +231,17 @@ const StudentSubmissionsPage = () => {
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
+                                    <div className="space-y-3 sm:space-y-4">
                                         {examDetails.answerSheets.map((sheet) => (
-                                            <div key={sheet._id} className="bg-white p-4 rounded-lg shadow-sm border border-green-100">
-                                                <div className="flex justify-between items-center mb-3">
-                                                    <h5 className="font-medium text-green-800">{sheet.filename}</h5>
-                                                    <span className="text-xs text-gray-500">
+                                            <div key={sheet._id} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-green-100">
+                                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                                                    <h5 className="font-medium text-sm sm:text-base text-green-800 break-all">{sheet.filename}</h5>
+                                                    <span className="text-xs text-gray-500 whitespace-nowrap">
                                                         {new Date(sheet.uploadDate).toLocaleDateString()}
                                                     </span>
                                                 </div>
                                                 
-                                                <div className="flex justify-between mt-2">
+                                                <div className="flex flex-col sm:flex-row gap-2 sm:justify-between mt-2">
                                                     <button
                                                         onClick={() => {
                                                             const url = sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`;
@@ -256,7 +257,7 @@ const StudentSubmissionsPage = () => {
                                                                 window.open(fileUrl, '_blank');
                                                             }
                                                         }}
-                                                        className="flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                                        className="flex items-center justify-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
                                                     >
                                                         <EyeIcon className="h-4 w-4 mr-1" />
                                                         Preview
@@ -264,7 +265,7 @@ const StudentSubmissionsPage = () => {
                                                     <a
                                                         href={`${import.meta.env.VITE_API_BASE_URL}${sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`}`}
                                                         download={sheet.filename}
-                                                        className="flex items-center px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700"
+                                                        className="flex items-center justify-center px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                                                     >
                                                         <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
                                                         Download
@@ -299,10 +300,10 @@ const StudentSubmissionsPage = () => {
                 )}
 
                 {/* Submissions List */}
-                <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 border border-gray-100">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-4">
                         <span className="flex items-center">
-                            <DocumentCheckIcon className="h-6 w-6 text-blue-600 mr-2" />
+                            <DocumentCheckIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 mr-2" />
                             Student Submissions ({submissions.length})
                         </span>
                     </h2>
@@ -313,7 +314,7 @@ const StudentSubmissionsPage = () => {
                             <p className="text-gray-500">No student submissions yet for this exam.</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                             {submissions.map((submission) => {
                                 const student = submission.student;
                                 // Defensive: skip if student is null
@@ -321,50 +322,52 @@ const StudentSubmissionsPage = () => {
                                 return (
                                     <div 
                                         key={submission._id}
-                                        className={`p-4 rounded-lg border transition-all ${
+                                        className={`p-3 sm:p-4 rounded-lg border transition-all cursor-pointer ${
                                             selectedStudent === student._id ? 
                                                 'border-blue-500 bg-blue-50 shadow-md' : 
                                                 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                                         }`}
                                         onClick={() => handleStudentSelect(student._id)}
                                     >
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <h3 className="text-lg font-medium">
+                                        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-base sm:text-lg font-medium truncate">
                                                     {student.name || `Student ID: ${student._id}`}
                                                 </h3>
-                                                <p className="text-sm text-gray-600 mt-1">
-                                                    Registration No: {student.rollNumber || 'N/A'}<br/>
-                                                    Uploaded Exam Sheet: {submission.filename || 'N/A'}<br/>
-                                                    Submitted: {new Date(submission.submissionDate).toLocaleString()}
-                                                </p>
+                                                <div className="text-xs sm:text-sm text-gray-600 mt-1 space-y-1">
+                                                    <p className="truncate"><span className="font-medium">Reg No:</span> {student.rollNumber || 'N/A'}</p>
+                                                    <p className="truncate"><span className="font-medium">File:</span> {submission.filename || 'N/A'}</p>
+                                                    <p className="hidden sm:block"><span className="font-medium">Submitted:</span> {new Date(submission.submissionDate).toLocaleString()}</p>
+                                                    <p className="sm:hidden"><span className="font-medium">Submitted:</span> {new Date(submission.submissionDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center space-x-3">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                                                 <div className="flex items-center">
                                                     {submission.score !== undefined ? (
                                                         <div className="flex items-center">
-                                                            <CheckCircleIcon className="h-5 w-5 text-green-600 mr-1" />
-                                                            <span className="font-medium">{submission.score}/100</span>
+                                                            <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-1" />
+                                                            <span className="font-medium text-sm sm:text-base">{submission.score}/100</span>
                                                         </div>
                                                     ) : (
                                                         <div className="flex items-center">
-                                                            <ClockIcon className="h-5 w-5 text-yellow-600 mr-1" />
-                                                            <span className="text-yellow-600">Not graded</span>
+                                                            <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 mr-1" />
+                                                            <span className="text-yellow-600 text-xs sm:text-sm">Not graded</span>
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="flex space-x-2">
+                                                <div className="flex gap-2 w-full sm:w-auto">
                                                     <button 
-                                                        className="flex items-center px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                                                        className="flex-1 sm:flex-none flex items-center justify-center px-3 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg text-xs sm:text-sm hover:bg-blue-700 transition-colors"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleStudentSelect(student._id);
                                                         }}
                                                     >
-                                                        View
+                                                        <EyeIcon className="h-4 w-4 sm:mr-1" />
+                                                        <span className="hidden sm:inline">View</span>
                                                     </button>
                                                     <button 
-                                                        className="flex items-center px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                                                        className="flex-1 sm:flex-none flex items-center justify-center px-3 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg text-xs sm:text-sm hover:bg-green-700 transition-colors"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             // Get the first answer sheet if available
@@ -384,39 +387,40 @@ const StudentSubmissionsPage = () => {
                                                             setShowEvaluationModal(true);
                                                         }}
                                                     >
-                                                        Evaluate
+                                                        <CheckCircleIcon className="h-4 w-4 sm:mr-1" />
+                                                        <span className="hidden sm:inline">Evaluate</span>
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                         {/* Show the fetched file below if this student is selected */}
                                         {selectedStudent === student._id && (
-                                            <div className="mt-4 p-4 bg-white border border-blue-200 rounded shadow">
-                                                <h4 className="font-semibold mb-2">Submitted Exam Paper:</h4>
+                                            <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-white border border-blue-200 rounded-lg shadow">
+                                                <h4 className="font-semibold text-sm sm:text-base mb-2">Submitted Exam Paper:</h4>
                                                 {!selectedStudentFile ? (
-                                                    <div className="text-center py-4">
+                                                    <div className="text-center py-6 sm:py-8">
                                                         <div className="animate-spin h-8 w-8 mx-auto mb-2 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-                                                        <p className="text-gray-600">Loading submission...</p>
+                                                        <p className="text-gray-600 text-sm sm:text-base">Loading submission...</p>
                                                     </div>
                                                 ) : (
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-3 sm:space-y-4">
                                                         {/\.pdf$/i.test(submission.filename) && (
                                                             <>
                                                                 <iframe
                                                                     src={selectedStudentFile}
                                                                     title="Submitted Exam PDF"
-                                                                    className="w-full h-[600px] border rounded"
+                                                                    className="w-full h-[400px] sm:h-[500px] lg:h-[600px] border rounded"
                                                                     onError={(e) => {
                                                                         setError('Failed to load PDF. Please try downloading instead.');
                                                                     }}
                                                                 />
-                                                                <div className="flex space-x-2">
+                                                                <div className="flex">
                                                                     <a
                                                                         href={selectedStudentFile}
                                                                         download={submission.filename}
-                                                                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                                        className="flex items-center justify-center w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                                                                     >
-                                                                        <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                                        <DocumentArrowDownIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                                                         Download PDF
                                                                     </a>
                                                                 </div>
@@ -436,9 +440,9 @@ const StudentSubmissionsPage = () => {
                                                                 <a
                                                                     href={selectedStudentFile}
                                                                     download={submission.filename}
-                                                                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                                    className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                                                                 >
-                                                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                                    <DocumentArrowDownIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                                                     Download Image
                                                                 </a>
                                                             </>
@@ -452,14 +456,14 @@ const StudentSubmissionsPage = () => {
                                                         )}
                                                         
                                                         {/\.doc$/i.test(submission.filename) && (
-                                                            <div className="text-center">
-                                                                <p className="text-gray-600 mb-4">Legacy .doc files cannot be previewed. Please download to view.</p>
+                                                            <div className="text-center py-4">
+                                                                <p className="text-gray-600 mb-4 text-sm sm:text-base">Legacy .doc files cannot be previewed. Please download to view.</p>
                                                                 <a
                                                                     href={selectedStudentFile}
                                                                     download={submission.filename}
-                                                                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                                    className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                                                                 >
-                                                                    <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
+                                                                    <DocumentArrowDownIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                                                     Download Document
                                                                 </a>
                                                             </div>

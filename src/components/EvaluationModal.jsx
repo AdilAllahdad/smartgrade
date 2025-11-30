@@ -110,37 +110,37 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-5 mx-auto p-5 border w-4/5 max-w-5xl shadow-lg rounded-md bg-white">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900">Evaluate Submission</h3>
+            <div className="relative top-2 sm:top-5 mx-2 sm:mx-auto p-3 sm:p-5 border w-auto sm:w-11/12 lg:w-4/5 max-w-5xl shadow-lg rounded-md sm:rounded-lg bg-white mb-4">
+                <div className="flex justify-between items-center mb-3 sm:mb-4">
+                    <h3 className="text-base sm:text-xl lg:text-2xl font-semibold text-gray-900">Evaluate Submission</h3>
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={onClose}
-                            className="text-gray-500 hover:text-gray-700"
+                            className="text-gray-500 hover:text-gray-700 p-1 sm:p-0"
                         >
-                            <XMarkIcon className="h-6 w-6" />
+                            <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                         </button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                     {/* Student Submission */}
-                    <div className="border rounded-lg p-4">
-                        <h4 className="font-semibold mb-4">Student's Submission</h4>
-                        <div className="h-[600px] overflow-y-auto">
+                    <div className="border rounded-lg p-3 sm:p-4">
+                        <h4 className="font-semibold text-sm sm:text-base mb-2 sm:mb-4">Student's Submission</h4>
+                        <div className="h-[300px] sm:h-[400px] lg:h-[600px] overflow-y-auto">
                             <DocumentViewer document={studentSubmission} title="Student Submission" />
                         </div>
                     </div>
 
                     {/* Answer Sheet */}
-                    <div className="border rounded-lg p-4">
-                        <h4 className="font-semibold mb-4">Official Answer Sheet</h4>
+                    <div className="border rounded-lg p-3 sm:p-4">
+                        <h4 className="font-semibold text-sm sm:text-base mb-2 sm:mb-4">Official Answer Sheet</h4>
                         {loading ? (
                             <LoadingIndicator />
                         ) : error ? (
                             <ErrorDisplay message={error} retry={fetchAnswerSheet} />
                         ) : (
-                            <div className="h-[600px] overflow-y-auto">
+                            <div className="h-[300px] sm:h-[400px] lg:h-[600px] overflow-y-auto">
                                 <DocumentViewer document={answerSheet} title="Answer Sheet" />
                             </div>
                         )}
@@ -154,7 +154,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                         
                         {/* Confirm Results Button */}
                         {processedData.evaluationResults && !saveSuccess && (
-                            <div className="mt-4 flex justify-center">
+                            <div className="mt-3 sm:mt-4 flex justify-center">
                                 <button
                                     onClick={async () => {
                                         if (!studentSubmission?._id) {
@@ -198,7 +198,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                         }
                                     }}
                                     disabled={isSaving || saveSuccess}
-                                    className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center space-x-2 shadow-md"
+                                    className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base"
                                 >
                                     {isSaving ? (
                                         <>
@@ -222,20 +222,20 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                         
                         {/* Success Message */}
                         {saveSuccess && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded">
-                                <div className="text-center p-6 bg-green-50 rounded-lg shadow-lg border border-green-200 max-w-md">
-                                    <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                                    <h3 className="text-xl font-semibold text-green-700 mb-2">Evaluation Saved!</h3>
-                                    <p className="text-green-600 mb-3">Results are now available to the student.</p>
+                            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded p-2">
+                                <div className="text-center p-4 sm:p-6 bg-green-50 rounded-lg shadow-lg border border-green-200 max-w-md mx-2">
+                                    <CheckCircleIcon className="h-12 w-12 sm:h-16 sm:w-16 text-green-500 mx-auto mb-3 sm:mb-4" />
+                                    <h3 className="text-lg sm:text-xl font-semibold text-green-700 mb-2">Evaluation Saved!</h3>
+                                    <p className="text-sm sm:text-base text-green-600 mb-3">Results are now available to the student.</p>
                                     
                                     {/* Notification Status */}
                                     {processedData.notificationStatus && (
-                                        <div className={`mt-3 p-3 rounded-lg ${
+                                        <div className={`mt-3 p-2 sm:p-3 rounded-lg ${
                                             processedData.notificationStatus.sent 
                                                 ? 'bg-blue-50 border border-blue-200' 
                                                 : 'bg-yellow-50 border border-yellow-200'
                                         }`}>
-                                            <p className={`text-sm font-medium ${
+                                            <p className={`text-xs sm:text-sm font-medium ${
                                                 processedData.notificationStatus.sent 
                                                     ? 'text-blue-700' 
                                                     : 'text-yellow-700'
@@ -266,7 +266,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                 {import.meta.env.DEV && <ProcessedDataDisplay processedData={processedData} />}
                 
                 {/* MCQ and Short Answer Summaries */}
-                <div className="mt-2">
+                <div className="mt-2 sm:mt-3">
                     <McqSummary 
                         mcqs={processedData.answerSheet.mcqs} 
                         title="MCQ Answers Summary" 
@@ -286,10 +286,10 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                     />
                 </div>
 
-                <div className="mt-6 flex justify-end space-x-4">
+                <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2 sm:gap-0 sm:space-x-4">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                        className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm sm:text-base order-2 sm:order-1"
                     >
                         Cancel
                     </button>
@@ -343,16 +343,19 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                 setIsEvaluating(false);
                             }
                         }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-sm sm:text-base order-1 sm:order-2"
                         disabled={isEvaluating}
                     >
                         {isEvaluating ? (
-                            <span className="flex items-center">
+                            <span className="flex items-center justify-center">
                                 <ArrowPathIcon className="h-4 w-4 mr-2 animate-spin" />
                                 Processing...
                             </span>
                         ) : (
-                            'Run AI Evaluation'
+                            <>
+                                <span className="hidden sm:inline">Run AI Evaluation</span>
+                                <span className="sm:hidden">Run Evaluation</span>
+                            </>
                         )}
                     </button>
                 </div>

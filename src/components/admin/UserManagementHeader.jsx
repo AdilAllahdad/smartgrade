@@ -3,21 +3,21 @@ import { PlusIcon, UserGroupIcon, AcademicCapIcon } from '@heroicons/react/24/ou
 
 const UserManagementHeader = ({ activeFilter, setActiveFilter, setShowModal, setSelectedRole, setNotification }) => {
     return (
-        <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center">
-                <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
+            <div className="flex flex-col sm:flex-row sm:items-center w-full sm:w-auto">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
                     <span className="bg-indigo-100 text-indigo-800 p-1 rounded mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                     </span>
-                    User Management
+                    <span className="truncate">User Management</span>
                 </h2>
                 
                 {/* Filter indicator */}
                 {activeFilter !== 'all' && (
-                    <div className="ml-4 flex items-center">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    <div className="mt-2 sm:mt-0 sm:ml-4 flex items-center">
+                        <span className={`inline-flex items-center px-2.5 py-1 md:px-3 rounded-full text-xs md:text-sm font-medium ${
                             activeFilter === 'student' 
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
                                 : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
@@ -37,16 +37,16 @@ const UserManagementHeader = ({ activeFilter, setActiveFilter, setShowModal, set
             </div>
             
             {/* Add New User Button */}
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
                 <button
-                    className="inline-flex items-center px-5 py-2.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300"
+                    className="inline-flex items-center justify-center w-full sm:w-auto px-4 md:px-5 py-2 md:py-2.5 border border-transparent rounded-md shadow-sm text-xs md:text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300"
                 >
-                    <PlusIcon className="h-5 w-5 mr-2" />
-                    Add New User
+                    <PlusIcon className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                    <span className="truncate">Add New User</span>
                 </button>
                 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 invisible group-hover:visible transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 mt-2">
+                <div className="absolute left-0 sm:right-0 sm:left-auto w-full sm:w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 invisible group-hover:visible transition-all duration-300 opacity-0 group-hover:opacity-100 z-10 mt-2">
                     <div className="py-2 divide-y divide-gray-100" role="menu" aria-orientation="vertical">
                         {/* Teacher Option */}
                         <button

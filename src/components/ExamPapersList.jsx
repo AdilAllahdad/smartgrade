@@ -475,65 +475,65 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
     return (
         <div className="max-w-6xl mx-auto">
             {/* Combined Exam Papers and Answer Sheets Section */}
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4">
+            <div className="mb-6 sm:mb-8">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4">
                     {user && user.role === 'student' ? 'Exam Papers & Results' : 'Exam Papers & Answer Sheets'}
                 </h2>
                 {examPapers.length === 0 ? (
-                    <div className="text-center p-8 bg-gray-50 rounded-lg">
-                        <p className="text-gray-500 mb-2">
+                    <div className="text-center p-6 sm:p-8 bg-gray-50 rounded-lg">
+                        <p className="text-sm sm:text-base text-gray-500 mb-2">
                             {user && user.role === 'teacher' 
                                 ? "You haven't uploaded any exam papers yet."
                                 : "No exam papers are available for you at this time."}
                         </p>
                         {user && user.role === 'teacher' && (
-                            <p className="text-blue-600">
+                            <p className="text-sm sm:text-base text-blue-600">
                                 Use the "Upload Exam Papers" section above to add your first exam paper.
                             </p>
                         )}
                     </div>
                 ) : (
-                    <div className="space-y-8">
+                    <div className="space-y-4 sm:space-y-6 md:space-y-8">
                         {examPapers.map((paper) => (
-                            <div key={paper._id} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md overflow-hidden border border-blue-100">
+                            <div key={paper._id} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl shadow-md overflow-hidden border border-blue-100">
                                 {/* Exam Paper Header */}
-                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 border-b flex items-center justify-between text-white">
-                                    <div className="flex items-center">
-                                        <DocumentIcon className="h-6 w-6 mr-2" />
-                                        <h3 className="text-xl font-bold truncate">{paper.title}</h3>
+                                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 sm:p-4 border-b flex flex-col sm:flex-row items-start sm:items-center justify-between text-white gap-2 sm:gap-0">
+                                    <div className="flex items-center min-w-0">
+                                        <DocumentIcon className="h-5 w-5 sm:h-6 sm:w-6 mr-2 flex-shrink-0" />
+                                        <h3 className="text-base sm:text-lg md:text-xl font-bold truncate">{paper.title}</h3>
                                     </div>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                                         {user && user.role === 'student' && paper.status && (
                                             (paper.status === 'evaluated' || paper.status === 'graded') ? (
-                                                <div className="text-xs font-medium bg-green-500 text-white px-3 py-1 rounded-full">
+                                                <div className="text-xs font-medium bg-green-500 text-white px-2 sm:px-3 py-1 rounded-full">
                                                     {paper.status === 'graded' ? 'Graded' : 'Evaluated'}
                                                 </div>
                                             ) : paper.submitted ? (
-                                                <div className="text-xs font-medium bg-yellow-500 text-white px-3 py-1 rounded-full">
+                                                <div className="text-xs font-medium bg-yellow-500 text-white px-2 sm:px-3 py-1 rounded-full">
                                                     Submitted
                                                 </div>
                                             ) : null
                                         )}
-                                        <div className="text-sm font-medium bg-white text-indigo-700 px-3 py-1 rounded-full">
+                                        <div className="text-xs sm:text-sm font-medium bg-white text-indigo-700 px-2 sm:px-3 py-1 rounded-full">
                                             {paper.semester} / {paper.section}
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div className="p-5">
+                                <div className="p-3 sm:p-4 md:p-5">
                                     {/* Paper Details */}
-                                    <div className="bg-white p-4 rounded-lg shadow-sm mb-5">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h4 className="font-semibold text-lg flex items-center">
-                                                <DocumentIcon className="h-5 w-5 text-blue-600 mr-2" />
+                                    <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm mb-3 sm:mb-4 md:mb-5">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
+                                            <h4 className="font-semibold text-sm sm:text-base md:text-lg flex items-center">
+                                                <DocumentIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-2" />
                                                 Question Paper
                                             </h4>
-                                            <span className="text-sm text-gray-600">
+                                            <span className="text-xs sm:text-sm text-gray-600">
                                                 Uploaded: {new Date(paper.uploadDate).toLocaleDateString()}
                                             </span>
                                         </div>
                                         
-                                        <div className="flex justify-between mt-2">
+                                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between mt-2">
                                             <button
                                                 onClick={() => {
                                                     console.log('Preview paper:', paper);
@@ -541,7 +541,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                                                     const url = paper.downloadUrl || `/api/exam-papers/download/${paper._id}`;
                                                     handlePreview(url, paper.filename || 'question-paper.pdf');
                                                 }}
-                                                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                                className="flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 text-sm sm:text-base rounded hover:bg-gray-200 w-full sm:w-auto"
                                             >
                                                 <EyeIcon className="h-4 w-4 mr-1" />
                                                 Preview
@@ -553,7 +553,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                                                     const url = paper.downloadUrl || `/api/exam-papers/download/${paper._id}`;
                                                     handleDownload(url, paper.filename || 'question-paper.pdf');
                                                 }}
-                                                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                className="flex items-center justify-center px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm sm:text-base rounded hover:bg-blue-700 w-full sm:w-auto"
                                             >
                                                 <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
                                                 Download
@@ -563,31 +563,31 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
 
                                     {/* Answer Sheets - Only visible for teachers */}
                                     {user && user.role === 'teacher' && (
-                                        <div className="mt-5 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-100">
-                                            <h4 className="font-semibold text-lg mb-3 flex items-center">
-                                                <DocumentCheckIcon className="h-5 w-5 text-green-600 mr-2" />
+                                        <div className="mt-3 sm:mt-4 md:mt-5 bg-gradient-to-r from-green-50 to-emerald-50 p-3 sm:p-4 rounded-lg border border-green-100">
+                                            <h4 className="font-semibold text-sm sm:text-base md:text-lg mb-2 sm:mb-3 flex items-center">
+                                                <DocumentCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-2" />
                                                 Associated Answer Sheets
                                             </h4>
                                             
                                             {(!paper.answerSheets || paper.answerSheets.length === 0) ? (
-                                                <div className="bg-white p-4 rounded-lg shadow-sm text-center">
-                                                    <p className="text-gray-500 italic">No answer sheets available for this exam.</p>
-                                                    <p className="text-sm text-blue-500 mt-2">
+                                                <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm text-center">
+                                                    <p className="text-sm sm:text-base text-gray-500 italic">No answer sheets available for this exam.</p>
+                                                    <p className="text-xs sm:text-sm text-blue-500 mt-2">
                                                         You can upload an answer sheet for this exam from the "Upload Exam Materials" section.
                                                     </p>
                                                 </div>
                                             ) : (
-                                                <div className="space-y-4">
+                                                <div className="space-y-3 sm:space-y-4">
                                                     {paper.answerSheets.map((sheet) => (
-                                                        <div key={sheet._id} className="bg-white p-4 rounded-lg shadow-sm border border-green-100">
-                                                            <div className="flex justify-between items-center mb-3">
-                                                                <h5 className="font-medium text-green-800">{sheet.filename}</h5>
+                                                        <div key={sheet._id} className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-green-100">
+                                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-2 sm:mb-3">
+                                                                <h5 className="font-medium text-sm sm:text-base text-green-800 break-words">{sheet.filename}</h5>
                                                                 <span className="text-xs text-gray-500">
                                                                     {new Date(sheet.uploadDate).toLocaleDateString()}
                                                                 </span>
                                                             </div>
                                                             
-                                                            <div className="flex justify-between mt-2">
+                                                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-between mt-2">
                                                                 <button
                                                                     onClick={() => {
                                                                         console.log('Preview sheet:', sheet);
@@ -595,7 +595,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                                                                         const url = sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`;
                                                                         handlePreview(url, sheet.filename || 'answer-sheet.pdf');
                                                                     }}
-                                                                    className="flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                                                                    className="flex items-center justify-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200 w-full sm:w-auto"
                                                                 >
                                                                     <EyeIcon className="h-4 w-4 mr-1" />
                                                                     Preview
@@ -607,7 +607,7 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                                                                         const url = sheet.downloadUrl || `/api/answer-sheets/download/${sheet._id}`;
                                                                         handleDownload(url, sheet.filename || 'answer-sheet.pdf');
                                                                     }}
-                                                                    className="flex items-center px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700"
+                                                                    className="flex items-center justify-center px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 w-full sm:w-auto"
                                                                 >
                                                                     <DocumentArrowDownIcon className="h-4 w-4 mr-1" />
                                                                     Download
@@ -622,16 +622,16 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
 
                                     {/* Student Submissions Section - Only visible for teachers */}
                                     {user && user.role === 'teacher' && (
-                                        <div className="mt-5">
+                                        <div className="mt-3 sm:mt-4 md:mt-5">
                                             <button
                                                 onClick={() => navigate(`/exam/${paper._id}/submissions`)}
-                                                className="flex items-center justify-between w-full p-4 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-700 border border-purple-200"
+                                                className="flex items-center justify-between w-full p-3 sm:p-4 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-700 border border-purple-200"
                                             >
-                                                <span className="font-semibold flex items-center">
-                                                    <UserGroupIcon className="h-5 w-5 mr-2" />
+                                                <span className="text-sm sm:text-base font-semibold flex items-center">
+                                                    <UserGroupIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                                     Student Submissions
                                                 </span>
-                                                <span className="text-sm bg-purple-600 text-white px-2 py-1 rounded-full">
+                                                <span className="text-xs sm:text-sm bg-purple-600 text-white px-2 py-1 rounded-full">
                                                     {paper.submissionCount || 0} submissions
                                                 </span>
                                             </button>
@@ -640,13 +640,13 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
 
                                     {/* See Result Button - Only visible for students when exam has been graded or evaluated */}
                                     {user && user.role === 'student' && showResults && (paper.status === 'graded' || paper.status === 'evaluated') && (
-                                        <div className="mt-5">
+                                        <div className="mt-3 sm:mt-4 md:mt-5">
                                             <button
                                                 onClick={() => onViewResult && onViewResult(paper._id)}
-                                                className="flex items-center justify-between w-full p-4 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 border border-green-200"
+                                                className="flex items-center justify-between w-full p-3 sm:p-4 rounded-lg bg-green-100 hover:bg-green-200 text-green-700 border border-green-200"
                                             >
-                                                <span className="font-semibold flex items-center">
-                                                    <DocumentCheckIcon className="h-5 w-5 mr-2" />
+                                                <span className="text-sm sm:text-base font-semibold flex items-center">
+                                                    <DocumentCheckIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                                     See Result
                                                 </span>
                                             </button>
@@ -661,15 +661,15 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
 
             {/* File Preview Modal */}
             {previewFile && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-                        <div className="p-4 border-b flex justify-between items-center">
-                            <h3 className="text-lg font-medium">Preview: {previewFile.name}</h3>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+                    <div className="bg-white rounded-lg sm:rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                        <div className="p-3 sm:p-4 border-b flex justify-between items-center">
+                            <h3 className="text-sm sm:text-base md:text-lg font-medium truncate pr-2">Preview: {previewFile.name}</h3>
                             <button onClick={closePreview} className="text-gray-500 hover:text-gray-700">
                                 <span className="text-2xl">&times;</span>
                             </button>
                         </div>
-                        <div className="flex-1 overflow-auto p-4 min-h-[50vh]">
+                        <div className="flex-1 overflow-auto p-2 sm:p-4 min-h-[50vh]">
                             {/* Debug info - remove in production */}
                             {process.env.NODE_ENV !== 'production' && (
                                 <div className="text-xs text-gray-500 mb-2 p-1 bg-gray-100 rounded">
@@ -681,16 +681,16 @@ const ExamPapersList = forwardRef(({ onExamSelect, showResults, onViewResult }, 
                                 <iframe 
                                     src={previewFile.url} 
                                     title="PDF Preview" 
-                                    className="w-full h-full min-h-[500px] border"
+                                    className="w-full h-full min-h-[400px] sm:min-h-[500px] border"
                                 />
                             ) : previewFile.type.startsWith('image/') ? (
                                 <img 
                                     src={previewFile.url} 
                                     alt="Document Preview" 
-                                    className="max-w-full max-h-[70vh] mx-auto"
+                                    className="max-w-full max-h-[60vh] sm:max-h-[70vh] mx-auto"
                                 />
                             ) : previewFile.isDocx ? (
-                                <div className="border rounded p-4 bg-white h-full min-h-[500px] overflow-auto">
+                                <div className="border rounded p-2 sm:p-4 bg-white h-full min-h-[400px] sm:min-h-[500px] overflow-auto">
                                     {convertingDocx ? (
                                         <div className="flex flex-col justify-center items-center h-full">
                                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mb-4"></div>

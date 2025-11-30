@@ -24,8 +24,8 @@ export default function DashboardLayout({ children, allowedRoles }) {
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100">
             <Header />
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-white rounded-xl shadow-md p-8 border border-gray-100">
+            <main className="flex-grow container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+                <div className="bg-white rounded-lg sm:rounded-xl shadow-md p-3 sm:p-5 md:p-8 border border-gray-100">
                     {children}
                 </div>
             </main>

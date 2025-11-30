@@ -111,7 +111,7 @@ async function notifyGuardianOfResult(guardian, student, exam, result) {
     
     const message = `Dear ${guardian.name},\n\n` +
         `The exam result for ${student.name} has been uploaded.\n\n` +
-        `Subject: ${exam.subject || 'Exam'}\n` +
+        `Subject: ${exam.title || exam.subject || 'Exam'}\n` +
         `Score: ${result.score}/${result.maxScore} (${percentage}%)\n` +
         `Grade: ${grade}\n\n` +
         `Login to view complete details.\n\n` +

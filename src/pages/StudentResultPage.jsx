@@ -148,20 +148,20 @@ export default function StudentResultPage() {
 
     return (
         <DashboardLayout allowedRoles={['student']}>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto px-2 sm:px-4 lg:px-0">
                 <button 
                     onClick={() => navigate('/student')}
-                    className="flex items-center text-blue-600 hover:text-blue-700 mb-6"
+                    className="flex items-center text-blue-600 hover:text-blue-700 mb-4 sm:mb-6 text-sm sm:text-base"
                 >
-                    <ArrowLeftIcon className="h-5 w-5 mr-1" />
+                    <ArrowLeftIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
                     Back to Dashboard
                 </button>
 
-                <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-white">
-                        <h1 className="text-2xl font-bold">Exam Result</h1>
+                <div className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden border border-gray-200">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-5 text-white">
+                        <h1 className="text-xl sm:text-2xl font-bold">Exam Result</h1>
                         {!loading && exam && (
-                            <p className="mt-2 text-blue-100">{exam.title}</p>
+                            <p className="mt-2 text-sm sm:text-base text-blue-100">{exam.title}</p>
                         )}
                     </div>
 
@@ -175,53 +175,53 @@ export default function StudentResultPage() {
                             <p className="mt-2">Please try again later or contact support if the problem persists.</p>
                         </div>
                     ) : !result ? (
-                        <div className="p-6 text-center">
-                            <DocumentCheckIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                            <h2 className="text-xl font-medium text-gray-700 mb-2">No Result Found</h2>
-                            <p className="text-gray-500">
+                        <div className="p-4 sm:p-6 text-center">
+                            <DocumentCheckIcon className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4" />
+                            <h2 className="text-lg sm:text-xl font-medium text-gray-700 mb-2">No Result Found</h2>
+                            <p className="text-sm sm:text-base text-gray-500">
                                 We couldn't find any result for this exam. If you've already submitted your work, 
                                 it might still be under evaluation.
                             </p>
                         </div>
                     ) : (
-                        <div className="p-6">
+                        <div className="p-4 sm:p-6">
                             {/* Result Details */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
                                     <div className="flex items-center mb-2">
-                                        <ChartBarIcon className="h-5 w-5 text-blue-600 mr-2" />
-                                        <h3 className="font-medium text-gray-700">Status</h3>
+                                        <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-2" />
+                                        <h3 className="text-sm sm:text-base font-medium text-gray-700">Status</h3>
                                     </div>
-                                    <div className="ml-7">
+                                    <div className="ml-6 sm:ml-7">
                                         {result.evaluationResults ? (
                                             <div>
-                                                <div className="text-lg font-semibold text-green-600">Evaluated</div>
-                                                <div className="text-sm text-gray-500 mt-1">
+                                                <div className="text-base sm:text-lg font-semibold text-green-600">Evaluated</div>
+                                                <div className="text-xs sm:text-sm text-gray-500 mt-1">
                                                     {result.evaluationResults.gradedAt ? 
                                                         `On ${new Date(result.evaluationResults.gradedAt).toLocaleDateString()}` : 
                                                         'AI evaluation complete'}
                                                 </div>
                                             </div>
                                         ) : result.status === 'graded' ? (
-                                            <div className="text-lg font-semibold text-green-600">Graded</div>
+                                            <div className="text-base sm:text-lg font-semibold text-green-600">Graded</div>
                                         ) : result.status === 'evaluated' ? (
-                                            <div className="text-lg font-semibold text-blue-600">Evaluated</div>
+                                            <div className="text-base sm:text-lg font-semibold text-blue-600">Evaluated</div>
                                         ) : (
-                                            <div className="text-lg font-semibold text-yellow-600">Pending Evaluation</div>
+                                            <div className="text-base sm:text-lg font-semibold text-yellow-600">Pending Evaluation</div>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
                                     <div className="flex items-center mb-2">
-                                        <ClockIcon className="h-5 w-5 text-blue-600 mr-2" />
-                                        <h3 className="font-medium text-gray-700">Submission Date</h3>
+                                        <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-2" />
+                                        <h3 className="text-sm sm:text-base font-medium text-gray-700">Submission Date</h3>
                                     </div>
-                                    <div className="ml-7">
-                                        <div className="text-lg font-semibold text-gray-800">
+                                    <div className="ml-6 sm:ml-7">
+                                        <div className="text-base sm:text-lg font-semibold text-gray-800">
                                             {result.submissionDate ? new Date(result.submissionDate).toLocaleDateString() : 'N/A'}
                                         </div>
-                                        <div className="text-sm text-gray-500 mt-1">
+                                        <div className="text-xs sm:text-sm text-gray-500 mt-1">
                                             {result.submissionDate ? new Date(result.submissionDate).toLocaleTimeString() : ''}
                                         </div>
                                     </div>
@@ -230,9 +230,9 @@ export default function StudentResultPage() {
                             
                             {/* Evaluation Results - Only shown when the result exists */}
                             {result.evaluationResults && (
-                                <div className="mb-8">
+                                <div className="mb-6 sm:mb-8">
                                     <div className="border-b pb-2 mb-4">
-                                        <h2 className="text-xl font-semibold text-gray-800">Evaluation Results</h2>
+                                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Evaluation Results</h2>
                                     </div>
                                     
                                     {/* Debug Information - Only visible in development mode */}
@@ -250,12 +250,12 @@ export default function StudentResultPage() {
                                     )}
                                     
                                     {/* Score Summary */}
-                                    <div className="bg-blue-50 rounded-lg p-5 mb-6">
-                                        <h3 className="font-semibold text-blue-900 mb-3">Score Summary</h3>
-                                        <div className="grid grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 rounded-lg p-4 sm:p-5 mb-4 sm:mb-6">
+                                        <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-3">Score Summary</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                             <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                <div className="text-sm text-gray-500">MCQ Score</div>
-                                                <div className="text-xl font-bold text-gray-800">
+                                                <div className="text-xs sm:text-sm text-gray-500">MCQ Score</div>
+                                                <div className="text-lg sm:text-xl font-bold text-gray-800">
                                                     {(() => {
                                                         // Calculate MCQ score from evaluationDetails.mcqResults if available
                                                         const mcqResults = result.evaluationResults.evaluationDetails?.mcqResults || [];
@@ -290,8 +290,8 @@ export default function StudentResultPage() {
                                             </div>
                                             
                                             <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                <div className="text-sm text-gray-500">Short Answer Score</div>
-                                                <div className="text-xl font-bold text-gray-800">
+                                                <div className="text-xs sm:text-sm text-gray-500">Short Answer Score</div>
+                                                <div className="text-lg sm:text-xl font-bold text-gray-800">
                                                     {(() => {
                                                         // Calculate Short Answer score from evaluationDetails.shortQuestionResults if available
                                                         const shortResults = result.evaluationResults.evaluationDetails?.shortQuestionResults || [];
@@ -337,8 +337,8 @@ export default function StudentResultPage() {
                                             </div>
                                             
                                             <div className="bg-indigo-100 rounded-lg p-3 shadow-sm">
-                                                <div className="text-sm font-medium text-indigo-800">Total Score</div>
-                                                <div className="text-2xl font-bold text-indigo-900">
+                                                <div className="text-xs sm:text-sm font-medium text-indigo-800">Total Score</div>
+                                                <div className="text-xl sm:text-2xl font-bold text-indigo-900">
                                                     {result.evaluationResults.score} / {result.evaluationResults.maxScore || 100}
                                                 </div>
                                                 <div className="text-sm font-semibold text-indigo-700">
@@ -353,28 +353,28 @@ export default function StudentResultPage() {
                                         {/* MCQ Results - Only show if evaluationDetails exists */}
                                         {result.evaluationResults.evaluationDetails && (
                                             <details open>
-                                                <summary className="cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 font-medium text-gray-700 hover:bg-gray-100">
+                                                <summary className="cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm sm:text-base font-medium text-gray-700 hover:bg-gray-100">
                                                     Multiple Choice Questions {result.evaluationResults.evaluationDetails?.mcqResults ? `(${result.evaluationResults.evaluationDetails.mcqResults.length})` : '(0)'}
                                                 </summary>
-                                                <div className="mt-3 p-4 bg-white border border-gray-200 rounded-lg">
+                                                <div className="mt-3 p-3 sm:p-4 bg-white border border-gray-200 rounded-lg">
                                                     {result.evaluationResults.evaluationDetails?.mcqResults?.length > 0 ? (
-                                                        <div className="overflow-x-auto">
+                                                        <div className="overflow-x-auto -mx-3 sm:mx-0">
                                                             <table className="min-w-full divide-y divide-gray-200">
                                                                 <thead className="bg-gray-50">
                                                                     <tr>
-                                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Q#</th>
-                                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Your Answer</th>
-                                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correct Answer</th>
-                                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
+                                                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Q#</th>
+                                                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Your Answer</th>
+                                                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correct Answer</th>
+                                                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody className="bg-white divide-y divide-gray-200">
                                                                     {result.evaluationResults.evaluationDetails.mcqResults.map((mcq) => (
                                                                         <tr key={mcq.questionNumber}>
-                                                                            <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{mcq.questionNumber}</td>
-                                                                            <td className="px-4 py-3 text-sm text-gray-500">{mcq.studentAnswer}</td>
-                                                                            <td className="px-4 py-3 text-sm text-gray-500">{mcq.correctAnswer}</td>
-                                                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                                            <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">{mcq.questionNumber}</td>
+                                                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500">{mcq.studentAnswer}</td>
+                                                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500">{mcq.correctAnswer}</td>
+                                                                            <td className="px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
                                                                                 {mcq.isCorrect ? (
                                                                                     <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                                                         Correct
@@ -402,40 +402,40 @@ export default function StudentResultPage() {
                                         {/* Short Answer Results - Only show if evaluationDetails exists */}
                                         {result.evaluationResults.evaluationDetails && (
                                             <details open>
-                                                <summary className="cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 font-medium text-gray-700 hover:bg-gray-100">
+                                                <summary className="cursor-pointer bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm sm:text-base font-medium text-gray-700 hover:bg-gray-100">
                                                     Short Answer Questions {result.evaluationResults.evaluationDetails?.shortQuestionResults ? `(${result.evaluationResults.evaluationDetails.shortQuestionResults.length})` : '(0)'}
                                                 </summary>
-                                                <div className="mt-3 p-4 bg-white border border-gray-200 rounded-lg">
+                                                <div className="mt-3 p-3 sm:p-4 bg-white border border-gray-200 rounded-lg">
                                                     {result.evaluationResults.evaluationDetails?.shortQuestionResults?.length > 0 ? (
                                                         result.evaluationResults.evaluationDetails.shortQuestionResults.map((q) => (
-                                                            <div key={q.questionNumber} className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                                                <div className="mb-2">
-                                                                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm font-medium">
+                                                            <div key={q.questionNumber} className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                                <div className="mb-2 flex flex-wrap gap-2">
+                                                                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs sm:text-sm font-medium">
                                                                         Question {q.questionNumber}
                                                                     </span>
-                                                                    <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded text-sm font-medium">
+                                                                    <span className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded text-xs sm:text-sm font-medium">
                                                                         Score: {q.score || 0}
                                                                     </span>
                                                                 </div>
                                                                 
                                                                 <div className="mt-3">
-                                                                    <div className="text-sm font-medium text-gray-700">Your Answer:</div>
-                                                                    <p className="mt-1 text-sm text-gray-600 p-3 bg-white rounded border border-gray-200">
+                                                                    <div className="text-xs sm:text-sm font-medium text-gray-700">Your Answer:</div>
+                                                                    <p className="mt-1 text-xs sm:text-sm text-gray-600 p-2 sm:p-3 bg-white rounded border border-gray-200 break-words">
                                                                         {q.studentAnswer || <em className="text-gray-400">No answer provided</em>}
                                                                     </p>
                                                                 </div>
                                                                 
                                                                 <div className="mt-3">
-                                                                    <div className="text-sm font-medium text-gray-700">Model Answer:</div>
-                                                                    <p className="mt-1 text-sm text-gray-600 p-3 bg-white rounded border border-gray-200">
+                                                                    <div className="text-xs sm:text-sm font-medium text-gray-700">Model Answer:</div>
+                                                                    <p className="mt-1 text-xs sm:text-sm text-gray-600 p-2 sm:p-3 bg-white rounded border border-gray-200 break-words">
                                                                         {q.modelAnswer || <em className="text-gray-400">No model answer provided</em>}
                                                                     </p>
                                                                 </div>
                                                                 
                                                                 {q.feedback && (
                                                                     <div className="mt-3">
-                                                                        <div className="text-sm font-medium text-gray-700">Feedback:</div>
-                                                                        <p className="mt-1 text-sm text-gray-600 p-3 bg-yellow-50 rounded border border-yellow-100">
+                                                                        <div className="text-xs sm:text-sm font-medium text-gray-700">Feedback:</div>
+                                                                        <p className="mt-1 text-xs sm:text-sm text-gray-600 p-2 sm:p-3 bg-yellow-50 rounded border border-yellow-100 break-words">
                                                                             {q.feedback}
                                                                         </p>
                                                                     </div>
@@ -456,12 +456,12 @@ export default function StudentResultPage() {
                             
                             {/* Message when results are pending */}
                             {!result.evaluationResults && (
-                                <div className="mb-8">
+                                <div className="mb-6 sm:mb-8">
                                     <div className="border-b pb-2 mb-4">
-                                        <h2 className="text-xl font-semibold text-gray-800">Results Pending</h2>
+                                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Results Pending</h2>
                                     </div>
-                                    <div className="bg-yellow-50 p-5 rounded-lg text-center border border-yellow-200">
-                                        <div className="text-xl font-semibold text-yellow-700 mb-2">
+                                    <div className="bg-yellow-50 p-4 sm:p-5 rounded-lg text-center border border-yellow-200">
+                                        <div className="text-lg sm:text-xl font-semibold text-yellow-700 mb-2">
                                             Your exam is being evaluated
                                         </div>
                                         <p className="text-gray-600">
@@ -473,12 +473,12 @@ export default function StudentResultPage() {
                             
                             {/* Traditional Scoring (if no detailed evaluation results but score exists) */}
                             {!result.evaluationResults && result.score !== undefined && (result.status === 'evaluated' || result.status === 'graded') && (
-                                <div className="mb-8">
+                                <div className="mb-6 sm:mb-8">
                                     <div className="border-b pb-2 mb-4">
-                                        <h2 className="text-xl font-semibold text-gray-800">Final Score</h2>
+                                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Final Score</h2>
                                     </div>
-                                    <div className="bg-blue-50 p-5 rounded-lg text-center">
-                                        <div className="text-3xl font-bold text-blue-800">
+                                    <div className="bg-blue-50 p-4 sm:p-5 rounded-lg text-center">
+                                        <div className="text-2xl sm:text-3xl font-bold text-blue-800">
                                             {result.score} / {result.totalMarks || 100}
                                         </div>
                                         <div className="text-sm text-blue-600 mt-1">
@@ -490,12 +490,12 @@ export default function StudentResultPage() {
                             
                             {/* Teacher Feedback */}
                             {result.feedback && (
-                                <div className="mb-6">
+                                <div className="mb-4 sm:mb-6">
                                     <div className="border-b pb-2 mb-4">
-                                        <h2 className="text-xl font-semibold text-gray-800">Teacher Feedback</h2>
+                                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Teacher Feedback</h2>
                                     </div>
-                                    <div className="bg-yellow-50 p-5 rounded-lg border border-yellow-200">
-                                        <p className="text-gray-800 whitespace-pre-line">{result.feedback}</p>
+                                    <div className="bg-yellow-50 p-4 sm:p-5 rounded-lg border border-yellow-200">
+                                        <p className="text-sm sm:text-base text-gray-800 whitespace-pre-line break-words">{result.feedback}</p>
                                     </div>
                                 </div>
                             )}
