@@ -293,7 +293,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationSaved, studentSubmission
                                     <span className="font-medium text-gray-900">Standard Evaluation</span>
                                     <span className="px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-800 rounded-full">Fast</span>
                                 </div>
-                                <p className="text-xs text-gray-600 mt-1">Keyword-based scoring (~100ms) • 60-75% accuracy</p>
+                                <p className="text-xs text-gray-600 mt-1">Keyword-based scoring (~100ms)</p>
                             </div>
                         </label>
                         
@@ -315,7 +315,7 @@ const EvaluationModal = ({ isOpen, onClose, onEvaluationSaved, studentSubmission
                                     <span className="font-medium text-gray-900">LLM Evaluation</span>
                                     <span className="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">AI-Powered</span>
                                 </div>
-                                <p className="text-xs text-gray-600 mt-1">Semantic understanding (2-5s) • 85-95% accuracy</p>
+                                <p className="text-xs text-gray-600 mt-1">Semantic understanding (2-5s)</p>
                             </div>
                         </label>
                     </div>
