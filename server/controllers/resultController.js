@@ -43,9 +43,22 @@ const getResultsByStudent = asyncHandler(async (req, res) => {
         throw new Error('Not authorized to access these results');
     }
     
-    const results = await Result.find({ student: studentId })
+    // Get all results for the student
+    const allResults = await Result.find({ student: studentId })
         .populate('exam', 'title description')
         .sort({ createdAt: -1 });
+    
+    // Filter to get only the latest result for each exam
+    const latestResultsMap = new Map();
+    allResults.forEach(result => {
+        const examId = result.exam._id.toString();
+        if (!latestResultsMap.has(examId)) {
+            latestResultsMap.set(examId, result);
+        }
+    });
+    
+    // Convert map values back to array
+    const results = Array.from(latestResultsMap.values());
     
     res.status(200).json(results);
 });

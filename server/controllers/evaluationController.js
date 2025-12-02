@@ -198,6 +198,7 @@ const saveEvaluationResults = asyncHandler(async (req, res) => {
         
         // Update the submission to mark it as evaluated and link to the result
         submission.status = 'evaluated';
+        submission.score = scoreSummary.totalObtained || 0;  // Update score field
         submission.evaluatedAt = new Date();
         submission.resultId = result._id;  // Connect submission to the result
         await submission.save();

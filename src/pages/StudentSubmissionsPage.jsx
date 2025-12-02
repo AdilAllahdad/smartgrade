@@ -32,72 +32,72 @@ const StudentSubmissionsPage = () => {
     const [selectedSubmission, setSelectedSubmission] = useState(null);
     const [previewFile, setPreviewFile] = useState(null);
 
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            
+            // Fetch exam details
+            const examResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers/${examId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!examResponse.ok) {
+                throw new Error('Failed to fetch exam details');
+            }
+
+            const examData = await examResponse.json();
+
+            // Fetch answer sheets if user is a teacher
+            if (user && user.role === 'teacher') {
+                const answersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/answer-sheets`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (answersResponse.ok) {
+                    const answersData = await answersResponse.json();
+                    // Filter answer sheets for this exam
+                    const relevantAnswerSheets = answersData.filter(sheet => 
+                        (sheet.examPaper && sheet.examPaper.toString() === examId) ||
+                        (sheet.examPaperId && sheet.examPaperId.toString() === examId)
+                    );
+                    examData.answerSheets = relevantAnswerSheets;
+                }
+            }
+
+            setExamDetails(examData);
+
+            // Fetch student submissions for this exam
+            const submissionsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!submissionsResponse.ok) {
+                throw new Error('Failed to fetch student submissions');
+            }
+
+            const submissionsData = await submissionsResponse.json();
+            console.log('Submissions data:', submissionsData);
+            setSubmissions(submissionsData);
+        } catch (err) {
+            console.error('Error fetching data:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!examId) {
             setError('No exam ID provided');
             setLoading(false);
             return;
         }
-
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                
-                // Fetch exam details
-                const examResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/exam-papers/${examId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (!examResponse.ok) {
-                    throw new Error('Failed to fetch exam details');
-                }
-
-                const examData = await examResponse.json();
-
-                // Fetch answer sheets if user is a teacher
-                if (user && user.role === 'teacher') {
-                    const answersResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/answer-sheets`, {
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                        }
-                    });
-
-                    if (answersResponse.ok) {
-                        const answersData = await answersResponse.json();
-                        // Filter answer sheets for this exam
-                        const relevantAnswerSheets = answersData.filter(sheet => 
-                            (sheet.examPaper && sheet.examPaper.toString() === examId) ||
-                            (sheet.examPaperId && sheet.examPaperId.toString() === examId)
-                        );
-                        examData.answerSheets = relevantAnswerSheets;
-                    }
-                }
-
-                setExamDetails(examData);
-
-                // Fetch student submissions for this exam
-                const submissionsResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/student-submissions/exam/${examId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (!submissionsResponse.ok) {
-                    throw new Error('Failed to fetch student submissions');
-                }
-
-                const submissionsData = await submissionsResponse.json();
-                console.log('Submissions data:', submissionsData);
-                setSubmissions(submissionsData);
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
 
         fetchData();
     }, [examId]);
@@ -346,7 +346,7 @@ const StudentSubmissionsPage = () => {
                                                     {submission.score !== undefined ? (
                                                         <div className="flex items-center">
                                                             <CheckCircleIcon className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mr-1" />
-                                                            <span className="font-medium text-sm sm:text-base">{submission.score}/100</span>
+                                                            <span className="font-medium text-sm sm:text-base">{submission.score}</span>
                                                         </div>
                                                     ) : (
                                                         <div className="flex items-center">
@@ -486,6 +486,10 @@ const StudentSubmissionsPage = () => {
                     onClose={() => {
                         setShowEvaluationModal(false);
                         setSelectedSubmission(null);
+                    }}
+                    onEvaluationSaved={() => {
+                        // Refresh submissions to show updated scores
+                        fetchData();
                     }}
                     studentSubmission={selectedSubmission}
                     examId={examId}

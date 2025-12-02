@@ -18,7 +18,7 @@ import { sendEvaluationToApi } from './evaluation/evaluationService';
 import { processDocumentsForEvaluation } from './evaluation/evaluationProcessor';
 import { saveEvaluationResults } from './evaluation/saveEvaluationService';
 
-const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
+const EvaluationModal = ({ isOpen, onClose, onEvaluationSaved, studentSubmission, examId }) => {
     const [answerSheet, setAnswerSheet] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -178,6 +178,11 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                             }));
                                             
                                             setSaveSuccess(true);
+                                            
+                                            // Call the callback to refresh parent component data
+                                            if (onEvaluationSaved) {
+                                                onEvaluationSaved();
+                                            }
                                             
                                             // Log notification status
                                             if (saveResponse.notification?.sent) {
