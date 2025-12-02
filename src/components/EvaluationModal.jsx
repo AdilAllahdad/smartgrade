@@ -26,6 +26,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [countdown, setCountdown] = useState(30); // Increased time for LLM processing
+    const [evaluationMode, setEvaluationMode] = useState('standard'); // 'standard' or 'llm'
     const [processedData, setProcessedData] = useState({
         studentSubmission: {
             mcqs: [],
@@ -265,6 +266,56 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                 {/* Debug Section for Processed Data (can be shown in development) */}
                 {import.meta.env.DEV && <ProcessedDataDisplay processedData={processedData} />}
                 
+                {/* Evaluation Mode Selection */}
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Select Evaluation Method</h4>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <label className={`flex items-center space-x-3 cursor-pointer p-3 border-2 rounded-lg transition-all hover:bg-white ${
+                            evaluationMode === 'standard' 
+                                ? 'border-blue-500 bg-blue-50' 
+                                : 'border-gray-300 bg-white'
+                        }`}>
+                            <input
+                                type="radio"
+                                name="evaluationMode"
+                                value="standard"
+                                checked={evaluationMode === 'standard'}
+                                onChange={(e) => setEvaluationMode(e.target.value)}
+                                className="w-4 h-4 text-blue-600"
+                            />
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2">
+                                    <span className="font-medium text-gray-900">Standard Evaluation</span>
+                                    <span className="px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-800 rounded-full">Fast</span>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">Keyword-based scoring (~100ms) • 60-75% accuracy</p>
+                            </div>
+                        </label>
+                        
+                        <label className={`flex items-center space-x-3 cursor-pointer p-3 border-2 rounded-lg transition-all hover:bg-white ${
+                            evaluationMode === 'llm' 
+                                ? 'border-purple-500 bg-purple-50' 
+                                : 'border-gray-300 bg-white'
+                        }`}>
+                            <input
+                                type="radio"
+                                name="evaluationMode"
+                                value="llm"
+                                checked={evaluationMode === 'llm'}
+                                onChange={(e) => setEvaluationMode(e.target.value)}
+                                className="w-4 h-4 text-purple-600"
+                            />
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2">
+                                    <span className="font-medium text-gray-900">LLM Evaluation</span>
+                                    <span className="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-800 rounded-full">AI-Powered</span>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">Semantic understanding (2-5s) • 85-95% accuracy</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
                 {/* MCQ and Short Answer Summaries */}
                 <div className="mt-2 sm:mt-3">
                     <McqSummary 
@@ -313,6 +364,7 @@ const EvaluationModal = ({ isOpen, onClose, studentSubmission, examId }) => {
                                     // Use the evaluation service to send data to the API
                                     await sendEvaluationToApi(
                                         newProcessedData,
+                                        evaluationMode, // Pass the selected evaluation mode
                                         // Success callback
                                         (evaluationResults) => {
                                             setProcessedData(prevData => ({

@@ -179,11 +179,20 @@ export const processDocumentsForEvaluation = async (studentSubmission, answerShe
     (answerSheetResult.shortQuestions || []).forEach(q => {
         if (!answerSheetQuestionNumbers.has(q.questionNumber)) {
             answerSheetQuestionNumbers.add(q.questionNumber);
-            uniqueAnswerSheetQuestions.push(q);
+            // Ensure correctAnswer field exists - use answer field if correctAnswer is missing
+            const processedQuestion = {
+                ...q,
+                correctAnswer: q.correctAnswer || q.answer || '',
+                type: 'short',
+                section: q.section || 'B'
+            };
+            uniqueAnswerSheetQuestions.push(processedQuestion);
         } else {
             console.log(`Skipping duplicate short question Q${q.questionNumber} from answer sheet`);
         }
     });
+    
+    console.log('Processed answer sheet short questions:', uniqueAnswerSheetQuestions.slice(0, 2));
     
     // Create the final processed data structure
     const processedData = {

@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Result = require('../models/resultModel');
 const ExamPaper = require('../models/examPaperModel');
-const { evaluateSubmission: aiEvaluate } = require('../services/evaluationService');
+const { evaluateSubmission: standardEvaluate } = require('../services/evaluationService');
+const { evaluateSubmission: llmEvaluate, isLLMEnabled } = require('../services/llmEvaluationService');
 const { notifyGuardianOfResult } = require('../services/notificationService');
 
 // Get the StudentSubmission model from mongoose directly
@@ -24,7 +25,14 @@ const evaluateSubmission = asyncHandler(async (req, res) => {
             evaluationData = req.body;
         }
 
+        // Get evaluation mode from request or use environment default
+        const evaluationMode = req.body.evaluationMode || 
+                              req.query.evaluationMode || 
+                              process.env.DEFAULT_EVALUATION_MODE || 
+                              'standard';
+
         console.log('Received evaluation request:', {
+            evaluationMode: evaluationMode,
             studentData: {
                 submissionId: evaluationData?.studentSubmission?.metadata?.submissionId,
                 filename: evaluationData?.studentSubmission?.metadata?.filename
@@ -35,8 +43,30 @@ const evaluateSubmission = asyncHandler(async (req, res) => {
             }
         });
 
-        // Use the AI evaluation service
-        const evaluationResults = await aiEvaluate(evaluationData);
+        // Choose evaluation service based on mode
+        let evaluationResults;
+        let evaluationMethod;
+
+        if (evaluationMode === 'llm' && isLLMEnabled()) {
+            console.log('Using LLM-based evaluation');
+            evaluationResults = await llmEvaluate(evaluationData);
+            evaluationMethod = 'LLM-Enhanced';
+        } else if (evaluationMode === 'llm' && !isLLMEnabled()) {
+            console.warn('LLM evaluation requested but not available - falling back to standard evaluation');
+            evaluationResults = await standardEvaluate(evaluationData);
+            evaluationMethod = 'Standard (LLM unavailable)';
+        } else {
+            console.log('Using standard evaluation');
+            evaluationResults = await standardEvaluate(evaluationData);
+            evaluationMethod = 'Standard';
+        }
+
+        // Add evaluation method to results
+        evaluationResults.metadata = {
+            ...evaluationResults.metadata,
+            evaluationMethod: evaluationMethod,
+            evaluationMode: evaluationMode
+        };
 
         // Only create a result record if we have complete data
         if (evaluationData?.answerSheet?.metadata?.examId && 
@@ -56,7 +86,8 @@ const evaluateSubmission = asyncHandler(async (req, res) => {
                         : 0,
                     evaluationDetails: {
                         mcqResults: evaluationResults.mcqResults,
-                        shortQuestionResults: evaluationResults.shortQuestionResults
+                        shortQuestionResults: evaluationResults.shortQuestionResults,
+                        evaluationMethod: evaluationMethod
                     },
                     gradedBy: userId,
                     gradedAt: new Date()

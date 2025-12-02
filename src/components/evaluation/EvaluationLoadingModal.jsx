@@ -12,7 +12,7 @@ const EvaluationLoadingModal = ({ isOpen }) => {
         </div>
         <h3 className="text-xl font-semibold mb-2">AI Evaluation in Progress</h3>
         <p className="text-gray-600 mb-4">
-          Our LLM model is analyzing the student submission and generating detailed feedback...
+          Our model is analyzing the student submission and generating detailed feedback...
         </p>
         <div className="bg-gray-100 p-3 rounded-lg text-left mb-4 text-sm">
           <p className="font-medium mb-1">Processing:</p>

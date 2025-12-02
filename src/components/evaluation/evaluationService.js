@@ -4,15 +4,17 @@ import React from 'react';
  * Sends evaluation data to the AI model API
  * 
  * @param {Object} processedData - The processed student and answer sheet data
+ * @param {string} evaluationMode - The evaluation mode: 'standard' or 'llm'
  * @param {Function} onSuccess - Callback when API call succeeds
  * @param {Function} onError - Callback when API call fails
  */
-export const sendEvaluationToApi = async (processedData, onSuccess, onError) => {
+export const sendEvaluationToApi = async (processedData, evaluationMode, onSuccess, onError) => {
     try {
         // Use the backend API URL instead of external ngrok URL
         const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api`;
         
         console.log('Sending data to:', `${API_BASE_URL}/evaluate`);
+        console.log('Evaluation Mode:', evaluationMode);
         
         // Ensure marks are included in all questions for evaluation
         if (processedData.answerSheet && processedData.answerSheet.mcqs) {
@@ -35,14 +37,17 @@ export const sendEvaluationToApi = async (processedData, onSuccess, onError) => 
         
         console.log('Data being sent (with marks):', processedData);
 
-        // Send data to the backend API
+        // Send data to the backend API with evaluation mode
         const response = await fetch(`${API_BASE_URL}/evaluate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify(processedData)
+            body: JSON.stringify({
+                ...processedData,
+                evaluationMode: evaluationMode // Include the evaluation mode
+            })
         });
         
         if (!response.ok) {
